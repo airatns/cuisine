@@ -1,6 +1,10 @@
 # from rest_framework import serializers
 
+# from djoser.serializers import TokenSerializer
 # from .models import User
+
+
+# class CustomTokenSerializer
 
 
 # class UserSerializer(serializers.ModelSerializer):
