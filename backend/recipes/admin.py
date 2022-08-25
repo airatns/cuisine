@@ -31,3 +31,4 @@ class TagsAdmin(admin.ModelAdmin):
     list_editable = ('name', 'color', 'slug')
     list_display_links = None
     empty_value_display = '-пусто-'
+

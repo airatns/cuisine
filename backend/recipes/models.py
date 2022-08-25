@@ -1,9 +1,6 @@
-from tabnanny import verbose
-from unicodedata import name
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
-
 
 User = get_user_model()
 
@@ -48,13 +45,13 @@ class Ingredients(models.Model):
         unique=True,
         db_index=True,
     )
-    quantity = models.IntegerField(
-        'Количество ингредиента',
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(1000)
-        ],
-    )
+    # quantity = models.IntegerField(
+    #     'Количество ингредиента',
+    #     validators=[
+    #         MinValueValidator(0),
+    #         MaxValueValidator(1000)
+    #     ],
+    # )
     measurement_unit = models.CharField(
         'Величина измерения ингредиента',
         max_length=15,
@@ -103,25 +100,25 @@ class Recipes(models.Model):
     )
     author = models.ForeignKey(
         User,
-        on_delete= models.CASCADE,
+        on_delete=models.CASCADE,
         related_name='recipes',
         verbose_name='Автор рецепта',
     )
     ingredients = models.ManyToManyField(
         Ingredients,
         related_name='recipes',
-        verbose_name='Ингредиенты'
+        verbose_name='Ингредиенты',
     )
     name = models.CharField(
         'Название рецепта',
         max_length=200,
     )
-    image = models.ImageField(
-        'Картинка',
-        upload_to='recipes/',
-        width_field=None,
-        height_field=None,
-    )
+    # image = models.ImageField(
+    #     'Картинка',
+    #     upload_to='../static/recipes/',
+    #     width_field=None,
+    #     height_field=None,
+    # )
     text = models.TextField(
         'Описание рецепта',
     )
@@ -133,12 +130,14 @@ class Recipes(models.Model):
             MaxValueValidator(10080)
         ]
     )
-
-    def is_favorited():
-        pass
-
-    def is_in_shopping_card():
-        pass
+    is_favorited = models.BooleanField(
+        'Присутствие в списке Избранного',
+        default = False,
+    )
+    is_in_shopping_cart = models.BooleanField(
+        'Присутствие в списке покупок',
+        default = False,
+    )
 
     class Meta:
         verbose_name = 'Рецепт'
