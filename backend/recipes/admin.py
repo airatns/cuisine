@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Ingredients, Recipes, Tags
+from .models import Ingredient, Recipe, Tag
 
 
-@admin.register(Ingredients)
+@admin.register(Ingredient)
 class IngredientsAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit')
     list_filter = ('name',)
@@ -11,7 +11,7 @@ class IngredientsAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-@admin.register(Recipes)
+@admin.register(Recipe)
 class RecipesAdmin(admin.ModelAdmin):
     list_display = ('name', 'text', 'author')
     list_filter = ('author', 'name', 'tags')
@@ -25,7 +25,7 @@ class RecipesAdmin(admin.ModelAdmin):
         pass
 
 
-@admin.register(Tags)
+@admin.register(Tag)
 class TagsAdmin(admin.ModelAdmin):
     list_display = ('name', 'color', 'slug')
     list_editable = ('name', 'color', 'slug')

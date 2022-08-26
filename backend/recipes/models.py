@@ -5,57 +5,17 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 User = get_user_model()
 
 
-MEASUREMENT_CHOICES = (
-    ('банка', 'банка'),
-    ('батон', 'батон'),
-    ('бутылка', 'бутылка'),
-    ('веточка', 'веточка'),
-    ('г', 'г'),
-    ('горсть', 'горсть'),
-    ('долька', 'долька'),
-    ('звездочка', 'звездочка'),
-    ('зубчик', 'зубчик'),
-    ('капля', 'капля'),
-    ('кг', 'кг'),
-    ('кусок', 'кусок'),
-    ('л', 'л'),
-    ('лист', 'лист'),
-    ('мл', 'мл'),
-    ('пакет', 'пакет'),
-    ('пакетик', 'пакетик'),
-    ('пачка', 'пачка'),
-    ('пласт', 'пласт'),
-    ('по вкусу', 'по вкусу'),
-    ('пучок', 'пучок'),
-    ('ст. л.', 'ст. л.'),
-    ('стакан', 'стакан'),
-    ('стебель', 'стебель'),
-    ('стручок', 'стручок'),
-    ('тушка', 'тушка'),
-    ('упаковка', 'упаковка'),
-    ('ч. л.', 'ч. л.'),
-    ('шт.', 'шт.'),
-    ('щепотка', 'щепотка'),
-)
-
-class Ingredients(models.Model):
+class Ingredient(models.Model):
+    """Модель ингредиентов.
+    """
     name = models.CharField(
         'Название ингредиента',
         max_length=150,
-        unique=True,
-        db_index=True,
+        # db_index=True,
     )
-    # quantity = models.IntegerField(
-    #     'Количество ингредиента',
-    #     validators=[
-    #         MinValueValidator(0),
-    #         MaxValueValidator(1000)
-    #     ],
-    # )
     measurement_unit = models.CharField(
         'Величина измерения ингредиента',
         max_length=15,
-        choices=MEASUREMENT_CHOICES,
     )
 
     class Meta:
@@ -66,15 +26,17 @@ class Ingredients(models.Model):
         return self.name
 
 
-class Tags(models.Model):
+class Tag(models.Model):
+    """Модель тегов.
+    """
     name = models.CharField(
         'Теги',
         max_length=15,
         unique=True,
-        db_index=True,
     )
     color = models.CharField(
         'Цветовой HEX-код',
+        unique=True,
         max_length=7,
     )
     slug = models.SlugField(
@@ -92,10 +54,11 @@ class Tags(models.Model):
         return self.name
 
 
-class Recipes(models.Model):
+class Recipe(models.Model):
+    """Модель рецептов.
+    """
     tags = models.ManyToManyField(
-        Tags,
-        related_name='recipes',
+        Tag,
         verbose_name='Тег', 
     )
     author = models.ForeignKey(
@@ -105,8 +68,8 @@ class Recipes(models.Model):
         verbose_name='Автор рецепта',
     )
     ingredients = models.ManyToManyField(
-        Ingredients,
-        related_name='recipes',
+        Ingredient,
+        through='IngredientForRecipe',
         verbose_name='Ингредиенты',
     )
     name = models.CharField(
@@ -116,27 +79,16 @@ class Recipes(models.Model):
     # image = models.ImageField(
     #     'Картинка',
     #     upload_to='../static/recipes/',
-    #     width_field=None,
-    #     height_field=None,
     # )
     text = models.TextField(
         'Описание рецепта',
     )
-    cooking_time = models.PositiveIntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления в минутах',
         help_text='Время приготовления в минутах',
         validators=[
             MinValueValidator(1),
-            MaxValueValidator(10080)
         ]
-    )
-    is_favorited = models.BooleanField(
-        'Присутствие в списке Избранного',
-        default = False,
-    )
-    is_in_shopping_cart = models.BooleanField(
-        'Присутствие в списке покупок',
-        default = False,
     )
 
     class Meta:
@@ -146,3 +98,33 @@ class Recipes(models.Model):
     def __str__(self):
         return self.name
 
+
+class IngredientForRecipe(models.Model):
+    """Модель ингредиентов для рецепта.
+    """
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingred_recipe',
+        verbose_name='Ингредиент',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='ingred_recipe',
+        verbose_name='Рецепт',
+    )
+    quantity = models.PositiveSmallIntegerField(
+        verbose_name='Количество ингредиентов',
+        validators=[
+            MinValueValidator(1)
+        ],
+    )
+
+    class Meta:
+        verbose_name = 'Количество ингредиента для рецепта'
+        verbose_name_plural = 'Количество ингредиентов для рецепта'
+
+    def __str__(self):
+        return (f'{self.ingredient.name} - {self.amount}'
+                f'{self.ingredient.measurement_unit}')
