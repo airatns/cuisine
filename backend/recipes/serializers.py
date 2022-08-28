@@ -143,6 +143,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe.save()
         return recipe
 
+
+
+
     def update(self, instance, validated_data):
         """Метод по изменению объекта Рецептов (PATCH-запрос).
         """
@@ -177,7 +180,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return serializer.data
 
 
-    def validate_name(self, value):
+    def validate_name(self, name):
         """Валидация на название Рецепта.
         Если у данного автора уже есть Рецепт с таким названием ,
         создание нового Рецепта невозможно.
@@ -186,9 +189,27 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             user = self.context['request'].user
             recipes_by_user = Recipe.objects.filter(author=user)
             for recipe in recipes_by_user:
-                if recipe.name.lower() == value.lower():
+                if recipe.name.lower() == name.lower():
                     raise serializers.ValidationError(
                         'Рецепт с таким названием уже был опубликован Вами!'
                     )
-        return value
+        return name
+
+
+    def validate_ingredients(self, ingredients):
+        """Валидация на дублирование Ингредиента.
+        Если несколько раз введен один и тот же Ингредиент,
+        его количество суммируется.
+        """
+        dict = {}
+        for ingredient in ingredients:
+            if ingredient['id'] in dict:
+                dict[ingredient['id']] += ingredient['quantity']
+            else:
+                dict[ingredient['id']] = ingredient['quantity']
+        return [
+            {'id': key,
+             'quantity': value
+            } for key, value in dict.items()
+        ]
 
