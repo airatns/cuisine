@@ -123,6 +123,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                   'cooking_time',
         )
 
+
     def create(self, validated_data):
         """Метод по созданию нового объекта Рецептов (POST-запрос).
         """
@@ -142,8 +143,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         recipe.save()
         return recipe
-
-
 
 
     def update(self, instance, validated_data):
@@ -168,6 +167,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         instance.save()
         return instance
+
 
     def to_representation(self, instance):
         """Метод переопределяет, в каком формате ожидаем увидеть
