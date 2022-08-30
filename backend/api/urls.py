@@ -2,7 +2,8 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet
-from users.views import UserDetail, UserListCreate
+# from users.views import profile_follow
+from users.views import UserDetail, UserListCreate, SubscribeViewSet
 
 
 router = DefaultRouter()
@@ -32,4 +33,5 @@ urlpatterns = [
     # здесь генерятся эндпоинты для остальных запросов
     path('', include(router.urls)),
 
+    path('users/<int:author_id>/subscribe/', SubscribeViewSet, name='subscribe'),
 ]

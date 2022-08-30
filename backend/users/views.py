@@ -1,10 +1,15 @@
-from rest_framework import mixins, status, viewsets, generics
+from rest_framework import mixins, status, viewsets, generics, mixins
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.decorators import action
+
 
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 
-from .models import User
-from .serializers import UserListSerializer, UserRegistrSerializer
+from .models import User, Subscribe
+from .mixins import ListCreateDeleteViewSet
+from .serializers import UserListSerializer, UserRegistrSerializer, SubscribeSerializer
 
 
 class UserListCreate(generics.ListCreateAPIView):
@@ -32,3 +37,17 @@ class UserDetail(generics.RetrieveAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserListSerializer
+
+
+class SubscribeViewSet(viewsets.ModelViewSet):
+
+    @action(detail=True,)
+    def subscribe(self, request, id=None):
+        user = request.user
+        author = get_object_or_404(User, id=id)
+        subscribe = Subscribe.objects.create(user=user, author=author)
+        serializer = SubscribeSerializer(
+            subscribe, 
+            context={'request': request}
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

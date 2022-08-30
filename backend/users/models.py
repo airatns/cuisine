@@ -4,6 +4,8 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 
 
 class UserManager(BaseUserManager):
+    """Класс Manager по созданию Пользователя и Суперпользователя.
+    """
     def _create_user(self, username, email, first_name, last_name, password,
                     **extra_fields):
         user = self.model(
@@ -37,6 +39,8 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """Кастомная модель Пользователя.
+    """
     username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(
@@ -63,13 +67,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    is_subscribed = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    is_subscribed = models.BooleanField()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'is_subscribed']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     objects = UserManager()
+    """Сообщаем Django, что для работы с объектами этого типа нужно использовать
+    определенный выше класс UserManager.
+    """
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -78,3 +85,33 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
+
+class Subscribe(models.Model):
+    """Модель Подписок.
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscriber',
+        verbose_name='Подписчик'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscription',
+        verbose_name='Автор рецептов'
+    )
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'user'],
+                name='unique subscribe'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.user.username} to {self.author.username}'
