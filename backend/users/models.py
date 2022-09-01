@@ -4,6 +4,8 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 
 
 class UserManager(BaseUserManager):
+    """Модель по созданию нового Пользователяи Суперпользователя.
+    """
     def _create_user(self, username, email, first_name, last_name, password,
                     **extra_fields):
         user = self.model(
@@ -37,6 +39,8 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """Кастомная модель Пользователя.
+    """
     username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(
@@ -78,3 +82,33 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
+
+class Subscription(models.Model):
+    """Модель Подписок на авторов.
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower',
+        verbose_name='Подписчик',
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following',
+        verbose_name='Автор рецепта'
+    )
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'user'],
+                name='unique subscribe'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.user.username} to {self.author.username}'
