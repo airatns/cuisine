@@ -1,4 +1,4 @@
-from rest_framework import mixins, status, viewsets, generics
+from rest_framework import mixins, status, viewsets, generics, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view
 from djoser.views import UserViewSet

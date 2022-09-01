@@ -5,6 +5,7 @@ from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet
 from users.views import UserListCreate, UserDetail, subscribe, subscriptions
 from django.views.decorators.csrf import csrf_exempt
 
+
 router = DefaultRouter()
 router.register('tags', TagViewSet, basename='tags')
 router.register('ingredients', IngredientViewSet, basename='ingredients')
@@ -14,7 +15,7 @@ urlpatterns = [
     # по данным эндпоинтам реализуются
     # POST и DELETE-запросы по подписке на автора
     # GET-запросы на вывод всех подписок Пользователя
-    path('users/<author_id>/subscribe/', subscribe, name='subscribe'),
+    path('users/<int:author_id>/subscribe/', subscribe, name='subscribe'),
     path('users/subscriptions/', subscriptions, name='subscriptions'),
 
     # по данным эндпоинтам реализуются 

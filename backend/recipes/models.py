@@ -111,7 +111,7 @@ class IngredientForRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='ingred_recipe',
+        related_name='recipe_ingred',
         verbose_name='Рецепт',
     )
     quantity = models.PositiveSmallIntegerField(
@@ -128,3 +128,4 @@ class IngredientForRecipe(models.Model):
     def __str__(self):
         return (f'{self.ingredient.name} - {self.amount}'
                 f'{self.ingredient.measurement_unit}')
+

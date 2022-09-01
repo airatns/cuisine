@@ -67,13 +67,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    is_subscribed = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    is_subscribed = models.BooleanField()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'is_subscribed']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     objects = UserManager()
+    """Сообщаем Django, что для работы с объектами этого типа нужно использовать
+    определенный выше класс UserManager.
+    """
 
     class Meta:
         verbose_name = 'Пользователь'

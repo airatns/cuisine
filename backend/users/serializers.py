@@ -5,6 +5,8 @@ from .models import Subscription, User
 class UserRegistrSerializer(serializers.ModelSerializer):
     """Сериализатор на создание пользователя.
     """
+    is_subscribed = serializers.BooleanField(default=False)
+
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'password', 'last_name', 'first_name', 'is_subscribed')
@@ -21,12 +23,19 @@ class UserRegistrSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class UserListSerializer(serializers.ModelSerializer):
     """Сериализатор на вывод на экран данных о пользователе(-ях).
     """
+    is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'last_name', 'first_name', 'is_subscribed')
+    
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        return Subscription.objects.filter(user=user, author=obj).exists()
 
 class SubscribeSerializer(serializers.ModelSerializer):
     """Сериализатор на вывод на экран данных о текущих подписках на авторов.
