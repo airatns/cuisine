@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Ingredient, IngredientForRecipe, Recipe, Tag
+from .models import Ingredient, IngredientForRecipe, Recipe, Tag, FavoriteRecipe
 from users.serializers import UserListSerializer
 from users.models import User
 from users.serializers import UserListSerializer
@@ -79,7 +79,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = UserListSerializer(read_only=True)
     ingredients = IngredientForRecipeListSerializer(
-        source='ingred_recipe',
+        source='recipe_ingred',
         many=True,
         read_only=True
     )
@@ -212,4 +212,17 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
              'quantity': value
             } for key, value in dict.items()
         ]
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    """Сериализатор на вывод на экран данных об Избранных рецептах.
+    """
+    id = serializers.ReadOnlyField(source='recipe.id')
+    name = serializers.ReadOnlyField(source='recipe.name')
+    # image = serializers.ReadOnlyField(source='recipe.image')
+    cooking_time = serializers.ReadOnlyField(source='recipe.cooking_time')
+
+    class Meta:
+        model = FavoriteRecipe
+        fields = ('id', 'name', 'cooking_time',)
 

@@ -51,7 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         validators=[username_validator],
     )
     email = models.EmailField(
-        'Адрес эдектронной почты',
+        'Адрес электронной почты',
         max_length=254,
         unique=True,
         db_index=True,
@@ -68,10 +68,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    is_subscribed = models.BooleanField()
+    is_subscribed = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name',]
 
     objects = UserManager()
     """Сообщаем Django, что для работы с объектами этого типа нужно использовать
@@ -115,3 +115,4 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f'{self.user.username} to {self.author.username}'
+

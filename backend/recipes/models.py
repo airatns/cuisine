@@ -129,3 +129,33 @@ class IngredientForRecipe(models.Model):
         return (f'{self.ingredient.name} - {self.amount}'
                 f'{self.ingredient.measurement_unit}')
 
+
+class FavoriteRecipe(models.Model):
+    """Модель Избранных рецептов.
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='users_favorite',
+        verbose_name='Подписчик',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favorite_recipe',
+        verbose_name='Избранный рецепта'
+    )
+
+    class Meta:
+        verbose_name = 'Избранный рецепт'
+        verbose_name_plural = 'Избранные рецепты'
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'user'],
+                name='unique recipe'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.recipe.name} is favorite for {self.user.username}'
