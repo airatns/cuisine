@@ -7,9 +7,9 @@ from django.views.decorators.csrf import csrf_protect
 from rest_framework.decorators import api_view, action
 from django.shortcuts import get_object_or_404
 
-from .models import FavoriteRecipe, Ingredient, Recipe, Tag
+from .models import FavoriteRecipe, Ingredient, Recipe, Tag, ShoppingCart
 from .serializers import IngredientSerializer, RecipeListSerializer, RecipeCreateSerializer, TagSerializer
-from .serializers import FavoriteSerializer
+from .serializers import FavoriteSerializer, ShoppingCartSerializer
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -79,4 +79,34 @@ def fav_recipe(request, recipe_id):
             }, status=status.HTTP_204_NO_CONTENT)
         return Response({
                 'message': 'Этого рецепта нет у Вас в Избранном',
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST', 'DELETE'])
+@action(detail=True, url_path='shopping_cart')
+def shopping_cart(request, recipe_id):
+    """Метод для работы со Списком покупок (добавление, удаление рецептов).
+    """
+    user = request.user
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    if request.method == 'POST':
+        if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+            return Response({
+                'message': 'Этот рецепт уже находится в Списке покупок'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        shopping_cart = ShoppingCart.objects.create(user=user, recipe=recipe)
+        serializer = ShoppingCartSerializer(
+            shopping_cart, context={'request': request}
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    elif request.method == 'DELETE':
+        shopping_cart = ShoppingCart.objects.filter(user=user, recipe=recipe)
+        if shopping_cart.exists():
+            shopping_cart.delete()
+            return Response({
+                'message': 'Рецепт удален из Списка покупок',
+            }, status=status.HTTP_204_NO_CONTENT)
+        return Response({
+                'message': 'Этого рецепта нет в Вашем Списке покупок',
             }, status=status.HTTP_400_BAD_REQUEST)

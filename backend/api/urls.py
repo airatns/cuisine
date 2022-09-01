@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet, fav_recipe
+from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet, fav_recipe, shopping_cart
 from users.views import UserListCreate, UserDetail, subscribe, subscriptions
 from django.views.decorators.csrf import csrf_exempt
 
@@ -21,6 +21,9 @@ urlpatterns = [
     # по данному эндпоинту реализуется
     # POST и DELETE-запросу на добавление рецептов в Избранное
     path('recipes/<int:recipe_id>/favorite/', fav_recipe, name='favorite'),
+
+
+    path('recipes/<int:recipe_id>/shopping_cart/', shopping_cart, name='shopping'),
 
     # по данным эндпоинтам реализуются 
     # GET-запросы к выводу списка Пользователей и

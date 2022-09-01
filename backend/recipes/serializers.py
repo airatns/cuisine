@@ -226,3 +226,16 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model = FavoriteRecipe
         fields = ('id', 'name', 'cooking_time',)
 
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    """Сериализатор на вывод на экран данных о рецептах из Списка покупок.
+    """
+    id = serializers.ReadOnlyField(source='recipe.id')
+    name = serializers.ReadOnlyField(source='recipe.name')
+    # image = serializers.ReadOnlyField(source='recipe.image')
+    cooking_time = serializers.ReadOnlyField(source='recipe.cooking_time')
+
+    class Meta:
+        model = FavoriteRecipe
+        fields = ('id', 'name', 'cooking_time',)
+
