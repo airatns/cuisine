@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet, fav_recipe, shopping_cart
+from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet, fav_recipe, shopping_cart, download_cart
 from users.views import UserListCreate, UserDetail, subscribe, subscriptions
 from django.views.decorators.csrf import csrf_exempt
 
@@ -13,17 +13,21 @@ router.register('recipes', RecipeViewSet, basename='recipes')
 
 urlpatterns = [
     # по данным эндпоинтам реализуются
-    # POST и DELETE-запросы по подписке на автора
-    # GET-запросы на вывод всех подписок Пользователя
+    # POST и DELETE-запросы по Подписке на автора
+    # GET-запросы на вывод всех Подписок Пользователя
     path('users/<int:author_id>/subscribe/', subscribe, name='subscribe'),
     path('users/subscriptions/', subscriptions, name='subscriptions'),
 
-    # по данному эндпоинту реализуется
-    # POST и DELETE-запросу на добавление рецептов в Избранное
+    # по данному эндпоинту реализуются
+    # POST и DELETE-запросы на добавление рецептов в Избранное
     path('recipes/<int:recipe_id>/favorite/', fav_recipe, name='favorite'),
 
-
+    # по данному эндпоинту реализуются
+    # POST и DELETE-запросу на добавление рецептов в Список покупок
     path('recipes/<int:recipe_id>/shopping_cart/', shopping_cart, name='shopping'),
+
+    # по данному эндпоинту реализуется выгрузка Списка для покупок
+    path('recipes/download_shopping_cart/', download_cart, name='download'),
 
     # по данным эндпоинтам реализуются 
     # GET-запросы к выводу списка Пользователей и
