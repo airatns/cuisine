@@ -41,18 +41,21 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
 
+
     def get_serializer_class(self):
         """Используем разные сериализаторы для GET и POST-запросов.
         """
         if self.request.method == 'GET':
             return RecipeListSerializer
         return RecipeCreateSerializer
-        
+
+
     def perform_create(self, serializer):
         """В поле Author передадим объект пользователя, отправшего запрос,
         при создании объекта Рецепта.
         """
         serializer.save(author=self.request.user)
+
 
     def perform_update(self, serializer):
         """В поле Author передадим объект пользователя, отправшего запрос,

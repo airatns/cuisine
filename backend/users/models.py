@@ -20,6 +20,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
     def create_user(self, username, email, first_name, last_name, password,
                     **extra_fields):
         extra_fields.setdefault('is_staff', False)
@@ -27,6 +28,7 @@ class UserManager(BaseUserManager):
         return self._create_user(
             username, email, first_name, last_name, password, **extra_fields
         )
+
 
     def create_superuser(self, username, email, first_name, last_name, password,
                          **extra_fields):
@@ -41,14 +43,12 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """Кастомная модель Пользователя.
     """
-    username_validator = UnicodeUsernameValidator()
-
     username = models.CharField(
         'Логин',
         max_length=150,
         unique=True,
         db_index=True,
-        validators=[username_validator],
+        validators=[UnicodeUsernameValidator()],
     )
     email = models.EmailField(
         'Адрес электронной почты',
@@ -115,4 +115,3 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f'{self.user.username} to {self.author.username}'
-

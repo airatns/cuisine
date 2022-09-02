@@ -11,7 +11,6 @@ class Ingredient(models.Model):
     name = models.CharField(
         'Название ингредиента',
         max_length=150,
-        # db_index=True,
     )
     measurement_unit = models.CharField(
         'Величина измерения ингредиента',
@@ -76,10 +75,10 @@ class Recipe(models.Model):
         'Название рецепта',
         max_length=200,
     )
-    # image = models.ImageField(
-    #     'Картинка',
-    #     upload_to='../static/recipes/',
-    # )
+    image = models.ImageField(
+        'Картинка',
+        upload_to='recipes/',
+    )
     text = models.TextField(
         'Описание рецепта',
     )

@@ -11,6 +11,7 @@ class UserRegistrSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'password', 'last_name', 'first_name', 'is_subscribed')
 
+
     def save(self):
         user = User(
             email=self.validated_data['email'],
@@ -33,9 +34,11 @@ class UserListSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'last_name', 'first_name', 'is_subscribed')
     
+
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
         return Subscription.objects.filter(user=user, author=obj).exists()
+
 
 class SubscribeSerializer(serializers.ModelSerializer):
     """Сериализатор на вывод на экран данных о текущих подписках на авторов.
@@ -54,10 +57,12 @@ class SubscribeSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'username', 'first_name', 'last_name',
                   'is_subscribed',)
 
+
     def get_is_subscribed(self, obj):
         return Subscription.objects.filter(
             user=obj.user, author=obj.author
         ).exists()
+
 
     # def get_recipes(self, obj):
     #     request = self.context.get('request')
@@ -66,6 +71,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
     #     if limit:
     #         queryset = queryset[:int(limit)]
     #     return CropRecipeSerializer(queryset, many=True).data
+
 
     # def get_recipes_count(self, obj):
     #     return Recipe.objects.filter(author=obj.author).count()

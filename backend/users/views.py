@@ -13,6 +13,7 @@ from .serializers import UserListSerializer, UserRegistrSerializer, SubscribeSer
 class UserListCreate(generics.ListCreateAPIView):
     serializer_class = UserRegistrSerializer
 
+
     def post(self, request):
         """Функция по созданию нового пользователя.
         """
@@ -21,6 +22,7 @@ class UserListCreate(generics.ListCreateAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     def get(self, request):
         """Функция по выводу на экран данных по всем пользователям.
