@@ -1,8 +1,14 @@
 from django.contrib import admin
-from .models import User
+from .models import User, Subscription
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email')
-    list_filter = ('username', 'email')
+    list_display = ('username', 'email', 'is_active', 'is_staff', 'is_admin', 'is_superuser')
+    search_fields = ('username', 'email')
+
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'author')
+    search_fields = ('user__username', 'author__username')

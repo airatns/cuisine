@@ -1,15 +1,15 @@
 from rest_framework import serializers
 from .models import Subscription, User
+from recipes.models import Recipe
 
 
 class UserRegistrSerializer(serializers.ModelSerializer):
     """Сериализатор на создание пользователя.
     """
-    is_subscribed = serializers.BooleanField(default=False)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'last_name', 'first_name', 'is_subscribed')
+        fields = ('id', 'username', 'email', 'password', 'last_name', 'first_name')
 
 
     def save(self):
@@ -28,6 +28,12 @@ class UserRegistrSerializer(serializers.ModelSerializer):
 class UserListSerializer(serializers.ModelSerializer):
     """Сериализатор на вывод на экран данных о пользователе(-ях).
     """
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'last_name', 'first_name', 'is_subscribed')
+    
+
+class UserDetailSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -40,6 +46,13 @@ class UserListSerializer(serializers.ModelSerializer):
         return Subscription.objects.filter(user=user, author=obj).exists()
 
 
+class RecipeInCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ['id', 'name', 'image', 'cooking_time',]
+        read_only_fields = ['id', 'name', 'image','cooking_time',]
+
+
 class SubscribeSerializer(serializers.ModelSerializer):
     """Сериализатор на вывод на экран данных о текущих подписках на авторов.
     """
@@ -49,29 +62,30 @@ class SubscribeSerializer(serializers.ModelSerializer):
     first_name = serializers.ReadOnlyField(source='author.first_name')
     last_name = serializers.ReadOnlyField(source='author.last_name')
     is_subscribed = serializers.SerializerMethodField()
-    # recipes = serializers.SerializerMethodField()
-    # recipes_count = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
         fields = ('id', 'email', 'username', 'first_name', 'last_name',
-                  'is_subscribed',)
-
+                  'is_subscribed', 'recipes_count', 'recipes')
 
     def get_is_subscribed(self, obj):
         return Subscription.objects.filter(
             user=obj.user, author=obj.author
         ).exists()
 
+    def get_recipes(self, obj):
+        author = User.objects.get(id=obj.author.id)
+        recipes = Recipe.objects.filter(author=author)
+        serializer = RecipeInCartSerializer(
+            recipes,
+            read_only=True,
+            many=True,
+        )
+        return serializer.data
 
-    # def get_recipes(self, obj):
-    #     request = self.context.get('request')
-    #     limit = request.GET.get('recipes_limit')
-    #     queryset = Recipe.objects.filter(author=obj.author)
-    #     if limit:
-    #         queryset = queryset[:int(limit)]
-    #     return CropRecipeSerializer(queryset, many=True).data
-
-
-    # def get_recipes_count(self, obj):
-    #     return Recipe.objects.filter(author=obj.author).count()
+    def get_recipes_count(self, obj):
+        author = User.objects.get(id=obj.author.id)
+        count = Recipe.objects.filter(author=author).count()
+        return count

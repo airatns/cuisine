@@ -1,8 +1,8 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet, fav_recipe, shopping_cart, download_cart
-from users.views import UserListCreate, UserDetail, subscribe, subscriptions
+from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet, fav_recipe, shopping_cart, DownloadShoppingCart
+from users.views import UserListCreate, UserDetail, subscribe, MeDetail, Subscriptions
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -16,7 +16,7 @@ urlpatterns = [
     # POST и DELETE-запросы по Подписке на автора
     # GET-запросы на вывод всех Подписок Пользователя
     path('users/<int:author_id>/subscribe/', subscribe, name='subscribe'),
-    path('users/subscriptions/', subscriptions, name='subscriptions'),
+    path('users/subscriptions/', Subscriptions.as_view(), name='subscriptions'),
 
     # по данному эндпоинту реализуются
     # POST и DELETE-запросы на добавление рецептов в Избранное
@@ -27,7 +27,7 @@ urlpatterns = [
     path('recipes/<int:recipe_id>/shopping_cart/', shopping_cart, name='shopping'),
 
     # по данному эндпоинту реализуется выгрузка Списка для покупок
-    path('recipes/download_shopping_cart/', download_cart, name='download'),
+    path('recipes/download_shopping_cart/', DownloadShoppingCart.as_view(), name='download'),
 
     # по данным эндпоинтам реализуются 
     # GET-запросы к выводу списка Пользователей и
@@ -35,9 +35,9 @@ urlpatterns = [
     # POST-запросы на создание Пользователя
     path('users/', UserListCreate.as_view(), name='users'),
     path('users/<int:pk>/', UserDetail.as_view(), name='profile'),
+    path('users/me/', MeDetail.as_view(), name='me'),
 
     # по данным стандартным эндпоинтам djoser реализуются
-    # GET-запросы к /users/me/ и
     # POST-запросы к /users/set_password/
     path('', include('djoser.urls')),
     path('', include('djoser.urls.authtoken')),

@@ -2,7 +2,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, filters
 from django.views.decorators.csrf import csrf_protect
 from rest_framework.decorators import api_view, action
 from django.shortcuts import get_object_or_404
@@ -13,12 +13,17 @@ import os
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.pagesizes import A4
 
 from .models import FavoriteRecipe, Ingredient, Recipe, Tag, ShoppingCart, IngredientForRecipe
 from .serializers import IngredientSerializer, RecipeListSerializer, RecipeCreateSerializer, TagSerializer
 from .serializers import FavoriteSerializer, ShoppingCartSerializer
+from .permissions import AuthorOrReadOnly, ReadOnly
+from rest_framework import permissions, generics
+from rest_framework.pagination import PageNumberPagination
+
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -26,6 +31,8 @@ class TagViewSet(ReadOnlyModelViewSet):
     """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = (permissions.AllowAny,)
+    pagination_class = None
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
@@ -33,6 +40,9 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     """
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    pagination_class = None
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(ModelViewSet):
@@ -40,7 +50,15 @@ class RecipeViewSet(ModelViewSet):
     """
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
+    permission_classes = (AuthorOrReadOnly,)
+    pagination_class = PageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('author', 'tags',)
 
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return (ReadOnly(),)
+        return super().get_permissions()
 
     def get_serializer_class(self):
         """Используем разные сериализаторы для GET и POST-запросов.
@@ -49,13 +67,32 @@ class RecipeViewSet(ModelViewSet):
             return RecipeListSerializer
         return RecipeCreateSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset
+        is_favorited = self.request.query_params.get('is_favorited')
+        is_in_shopping_cart = self.request.query_params.get('is_in_shopping_cart')
+
+        if is_favorited is not None:
+            if is_favorited == '1':
+                queryset = queryset.filter(favorite_recipe__user=user,)
+            else:
+                queryset = queryset.exclude(favorite_recipe__user=user,)
+        
+        if is_in_shopping_cart is not None:
+            if is_in_shopping_cart == '1':
+                queryset = queryset.filter(shopper_recipe__user=user,)
+            else:
+                queryset = queryset.exclude(shopper_recipe__user=user,)
+
+        return queryset
+
 
     def perform_create(self, serializer):
         """В поле Author передадим объект пользователя, отправшего запрос,
         при создании объекта Рецепта.
         """
         serializer.save(author=self.request.user)
-
 
     def perform_update(self, serializer):
         """В поле Author передадим объект пользователя, отправшего запрос,
@@ -65,11 +102,16 @@ class RecipeViewSet(ModelViewSet):
 
 
 @api_view(['POST', 'DELETE'])
-@action(detail=True, url_path='favorite')
+@action(detail=True, url_path='favorite', permission_classes=(permissions.IsAuthenticated,),)
 def fav_recipe(request, recipe_id):
     """Метод по добавлению и удалению рецептов в Избранное.
     """
     user = request.user
+    if user.is_anonymous:
+        return Response({
+            'message': 'Пожалуйста, войдите в Вашу учетную систему',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
     recipe = get_object_or_404(Recipe, pk=recipe_id)
     if request.method == 'POST':
         if FavoriteRecipe.objects.filter(user=user, recipe=recipe).exists():
@@ -95,11 +137,16 @@ def fav_recipe(request, recipe_id):
 
 
 @api_view(['POST', 'DELETE'])
-@action(detail=True, url_path='shopping_cart')
+@action(detail=True, url_path='shopping_cart', permission_classes=(permissions.IsAuthenticated,),)
 def shopping_cart(request, recipe_id):
     """Метод для работы со Списком покупок (добавление, удаление рецептов).
     """
     user = request.user
+    if user.is_anonymous:
+        return Response({
+            'message': 'Пожалуйста, войдите в Вашу учетную систему',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
     recipe = get_object_or_404(Recipe, pk=recipe_id)
     if request.method == 'POST':
         if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
@@ -124,42 +171,44 @@ def shopping_cart(request, recipe_id):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET',])
-def download_cart(request):
-    """Метод предоставляет pdf-файл со списком необходимых ингредиентов.
-    """
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachement; filename="ShoppingCart.pdf"'
-    buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=A4)
+class DownloadShoppingCart(generics.ListAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
 
-    # Start writitng the PDF here
-    p.setFont('Helvetica', 15, leading=None)
-    p.setFillColorRGB(0.29296875, 0.453125, 0.609375)
-    p.drawString(210, 800, 'Ingredients for purchase')
-    p.line(0, 780, 1000, 780)
-    p.line(0, 778, 1000, 778)
-    x1 = 20
-    y1 = 750
+    def get(self, request):
+        """Метод предоставляет pdf-файл со списком необходимых ингредиентов.
+        """
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachement; filename="ShoppingCart.pdf"'
+        folder = settings.FONTS_PATH
+        ttf_file = os.path.join(folder, 'PT-Astra-Sans_Regular.ttf')
+        pdfmetrics.registerFont(TTFont('PTAstraSans', ttf_file, 'UTF-8'))
 
-    # Data to print
-    user = request.user
-    ingredient_list = {}
-    ingredients = IngredientForRecipe.objects.filter(recipe__shopper_recipe__user=user)
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer, pagesize=A4)
+        p.setFont('PTAstraSans', 15, leading=None)
+        p.setFillColorRGB(0.29296875, 0.453125, 0.609375)
+        p.drawString(210, 800, 'Ingredients for purchase')
+        p.line(0, 780, 1000, 780)
+        p.line(0, 778, 1000, 778)
+        x1 = 20
+        y1 = 750
 
-    for item in ingredients:
-        key = f'{item.ingredient.name} ({item.ingredient.measurement_unit})'.capitalize()
-        ingredient_list[key] = ingredient_list.setdefault(key, 0) + item.quantity
-    for key, value in ingredient_list.items():
-        p.setFont('Helvetica', 10, leading=None)
-        message = f'* {key} - {value}'
-        p.drawString(x1, y1-12, message)
-        y1 = y1-15
+        user = request.user
+        ingredient_list = {}
+        ingredients = IngredientForRecipe.objects.filter(recipe__shopper_recipe__user=user)
+        for item in ingredients:
+            key = f'{item.ingredient.name} ({item.ingredient.measurement_unit})'.capitalize()
+            ingredient_list[key] = ingredient_list.setdefault(key, 0) + item.quantity
+        for key, value in ingredient_list.items():
+            p.setFont('PTAstraSans', 10, leading=None)
+            message = f'* {key} - {value}'
+            p.drawString(x1, y1-12, message)
+            y1 = y1-15
 
-    p.setTitle('Ingredients for purchase')
-    p.showPage()
-    p.save()
-    pdf = buffer.getvalue()
-    buffer.close()
-    response.write(pdf)
-    return response
+        p.setTitle('Ingredients for purchase')
+        p.showPage()
+        p.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response

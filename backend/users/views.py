@@ -1,4 +1,4 @@
-from rest_framework import mixins, status, viewsets, generics, mixins
+from rest_framework import mixins, status, viewsets, generics, mixins, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view
 from djoser.views import UserViewSet
@@ -6,45 +6,66 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 
+from rest_framework.pagination import PageNumberPagination
 from .models import User, Subscription
-from .serializers import UserListSerializer, UserRegistrSerializer, SubscribeSerializer
+from recipes.models import Recipe
+from .serializers import UserListSerializer, UserRegistrSerializer, SubscribeSerializer, UserDetailSerializer
 
 
-class UserListCreate(generics.ListCreateAPIView):
-    serializer_class = UserRegistrSerializer
-
+class UserListCreate(generics.ListCreateAPIView, PageNumberPagination):
+    serializer_class = UserListSerializer
+    queryset = User.objects.all()
 
     def post(self, request):
         """Функция по созданию нового пользователя.
         """
-        serializer = self.serializer_class(data=request.data)
+        serializer = UserRegistrSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
     def get(self, request):
         """Функция по выводу на экран данных по всем пользователям.
         """
-        user = User.objects.all()
-        serializer = UserListSerializer(user, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        users = User.objects.all()
+        results = self.paginate_queryset(users,)
+        serializer = UserListSerializer(results, many=True)
+        return self.get_paginated_response(serializer.data,)
 
 
 class UserDetail(generics.RetrieveAPIView):
     """Вывод на экран данных о пользователе по id.
     """
     queryset = User.objects.all()
+    serializer_class = UserDetailSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+class MeDetail(generics.RetrieveAPIView):
+    """Вывод на экран данных о текущем Пользователе.
+    """
+    queryset = User.objects.all()
     serializer_class = UserListSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        current_user = get_object_or_404(User, username=request.user.username)
+        serializer = UserListSerializer(current_user,)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST', 'DELETE'])
-@action(detail=False, url_path='subscribe')
+@action(detail=False, url_path='subscribe', permission_classes=(permissions.IsAuthenticated,),)
 def subscribe(request, author_id):
     """Метод по созданию и удалению Подписки на автора.
     """
     user = request.user
+    if user.is_anonymous:
+        return Response({
+            'message': 'Пожалуйста, войдите в Вашу учетную систему',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
     author = get_object_or_404(User, pk=author_id)
     if request.method == 'POST':
         if user == author:
@@ -73,12 +94,17 @@ def subscribe(request, author_id):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
-@action(detail=False, url_path='subscriptions')
-def subscriptions(request):
-    """Метод по выводу всех Подписок на автора текущего Пользователя.
-    """
-    user = request.user
-    subscriptions = Subscription.objects.filter(user=user)
-    serializer = SubscribeSerializer(subscriptions, many=True)
-    return Response(serializer.data)
+class Subscriptions(generics.ListAPIView, PageNumberPagination):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscribeSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        """Метод по выводу всех Подписок на автора текущего Пользователя.
+        """
+        user = request.user
+        subscriptions = Subscription.objects.filter(user=user)
+        results = self.paginate_queryset(subscriptions,)
+        serializer = SubscribeSerializer(results, many=True)
+        return self.get_paginated_response(serializer.data,)
+
