@@ -1,15 +1,12 @@
-from rest_framework import mixins, status, viewsets, generics, mixins, permissions
-from rest_framework.response import Response
-from rest_framework.decorators import action, api_view
-from djoser.views import UserViewSet
-from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
-from rest_framework import status
-
+from rest_framework import generics, permissions, status
+from rest_framework.decorators import action, api_view
 from rest_framework.pagination import PageNumberPagination
-from .models import User, Subscription
-from recipes.models import Recipe
-from .serializers import UserListSerializer, UserRegistrSerializer, SubscribeSerializer, UserDetailSerializer
+from rest_framework.response import Response
+
+from .models import Subscription, User
+from .serializers import (SubscribeSerializer, UserDetailSerializer,
+                          UserListSerializer, UserRegistrSerializer)
 
 
 class UserListCreate(generics.ListCreateAPIView, PageNumberPagination):
@@ -56,7 +53,8 @@ class MeDetail(generics.RetrieveAPIView):
 
 
 @api_view(['POST', 'DELETE'])
-@action(detail=False, url_path='subscribe', permission_classes=(permissions.IsAuthenticated,),)
+@action(detail=False, url_path='subscribe',
+        permission_classes=(permissions.IsAuthenticated,),)
 def subscribe(request, author_id):
     """Метод по созданию и удалению Подписки на автора.
     """
@@ -107,4 +105,3 @@ class Subscriptions(generics.ListAPIView, PageNumberPagination):
         results = self.paginate_queryset(subscriptions,)
         serializer = SubscribeSerializer(results, many=True)
         return self.get_paginated_response(serializer.data,)
-

@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from .models import Subscription, User
 from recipes.models import Recipe
+from rest_framework import serializers
+
+from .models import Subscription, User
 
 
 class UserRegistrSerializer(serializers.ModelSerializer):
@@ -9,8 +10,8 @@ class UserRegistrSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'last_name', 'first_name')
-
+        fields = ('id', 'username', 'email', 'password',
+                  'last_name', 'first_name')
 
     def save(self):
         user = User(
@@ -30,16 +31,17 @@ class UserListSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'last_name', 'first_name', 'is_subscribed')
-    
+        fields = ('id', 'username', 'email', 'last_name',
+                  'first_name', 'is_subscribed')
+
 
 class UserDetailSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'last_name', 'first_name', 'is_subscribed')
-    
+        fields = ('id', 'username', 'email', 'last_name',
+                  'first_name', 'is_subscribed')
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
@@ -49,8 +51,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
 class RecipeInCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ['id', 'name', 'image', 'cooking_time',]
-        read_only_fields = ['id', 'name', 'image','cooking_time',]
+        fields = ['id', 'name', 'image', 'cooking_time']
+        read_only_fields = ['id', 'name', 'image', 'cooking_time']
 
 
 class SubscribeSerializer(serializers.ModelSerializer):

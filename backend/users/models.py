@@ -1,13 +1,14 @@
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+                                        PermissionsMixin)
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.db import models
 
 
 class UserManager(BaseUserManager):
     """Модель по созданию нового Пользователяи Суперпользователя.
     """
     def _create_user(self, username, email, first_name, last_name, password,
-                    **extra_fields):
+                     **extra_fields):
         user = self.model(
             username=username,
             email=self.normalize_email(email),
@@ -20,7 +21,6 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
     def create_user(self, username, email, first_name, last_name, password,
                     **extra_fields):
         extra_fields.setdefault('is_staff', False)
@@ -29,9 +29,8 @@ class UserManager(BaseUserManager):
             username, email, first_name, last_name, password, **extra_fields
         )
 
-
-    def create_superuser(self, username, email, first_name, last_name, password,
-                         **extra_fields):
+    def create_superuser(self, username, email, first_name, last_name,
+                         password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_admin', True)
@@ -71,12 +70,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_subscribed = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name',]
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    objects = UserManager()
-    """Сообщаем Django, что для работы с объектами этого типа нужно использовать
-    определенный выше класс UserManager.
+    """Сообщаем Django, что для работы с объектами этого типа
+    нужно использовать определенный выше класс UserManager.
     """
+    objects = UserManager()
 
     class Meta:
         verbose_name = 'Пользователь'

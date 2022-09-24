@@ -1,6 +1,6 @@
 from csv import DictReader
-from django.core.management import BaseCommand
 
+from django.core.management import BaseCommand
 from recipes.models import Ingredient
 
 """If you need to reload the data from the CSV file,
@@ -23,4 +23,3 @@ class Command(BaseCommand):
                 measurement_unit=row['measurement_unit'],
             )
             data.save()
-

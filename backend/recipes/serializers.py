@@ -1,13 +1,11 @@
-from rest_framework import serializers
-
-from .models import Ingredient, IngredientForRecipe, Recipe, ShoppingCart, Tag, FavoriteRecipe
-from users.serializers import UserListSerializer
-from users.models import User
-from users.serializers import UserListSerializer
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework.response import Response
+from rest_framework import serializers
+from users.serializers import UserListSerializer
+
+from .models import (FavoriteRecipe, Ingredient, IngredientForRecipe, Recipe,
+                     ShoppingCart, Tag)
+
 
 class TagSerializer(serializers.ModelSerializer):
     """Сериализатор определяет, в каком формате ожидаем увидеть
@@ -29,11 +27,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class TagID2ObjectSerializer(serializers.RelatedField):
     """Сериализатор переопределяет, в каком формате ожидаем увидеть
-    данные по Тегам, извлеченные из БД.
+    данные по Тегам для Рецепта, извлеченные из БД.
     """
     def to_internal_value(self, data):
         return data
-
 
     def to_representation(self, data):
         return {
@@ -99,18 +96,19 @@ class RecipeListSerializer(serializers.ModelSerializer):
                   'name',
                   'image',
                   'text',
-                  'cooking_time',
-        )
-
+                  'cooking_time',)
 
     def get_is_favorited(self, obj):
+        """Метод определяет, находится ли Рецепт в списке Избранного.
+        """
         user = self.context['request'].user
         if user.is_anonymous:
             return False
         return FavoriteRecipe.objects.filter(user=user, recipe=obj).exists()
 
-
     def get_is_in_shopping_cart(self, obj):
+        """Метод определяет, находится ли Рецепт в списке Покупок.
+        """
         user = self.context['request'].user
         if user.is_anonymous:
             return False
@@ -135,9 +133,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                   'name',
                   'image',
                   'text',
-                  'cooking_time',
-        )
-
+                  'cooking_time',)
 
     def create(self, validated_data):
         """Метод по созданию нового объекта Рецептов (POST-запрос).
@@ -158,7 +154,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         recipe.save()
         return recipe
-
 
     def update(self, instance, validated_data):
         """Метод по изменению объекта Рецептов (PATCH-запрос).
@@ -183,7 +178,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-
     def to_representation(self, instance):
         """Метод переопределяет, в каком формате ожидаем увидеть
         данные по Рецептам, извлеченные из БД.
@@ -193,7 +187,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             context=self.context
         )
         return serializer.data
-
 
     def validate_name(self, name):
         """Валидация на название Рецепта.
@@ -210,7 +203,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     )
         return name
 
-
     def validate_ingredients(self, ingredients):
         """Валидация на дублирование Ингредиента.
         Если несколько раз введен один и тот же Ингредиент,
@@ -224,8 +216,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 dict[ingredient['id']] = ingredient['quantity']
         return [
             {'id': key,
-             'quantity': value
-            } for key, value in dict.items()
+             'quantity': value} for key, value in dict.items()
         ]
 
 
@@ -239,7 +230,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FavoriteRecipe
-        fields = ('id', 'name', 'image','cooking_time',)
+        fields = ('id', 'name', 'image', 'cooking_time',)
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
@@ -252,8 +243,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FavoriteRecipe
-        fields = ('id', 'name', 'image','cooking_time',)
-
+        fields = ('id', 'name', 'image', 'cooking_time',)
 
     def validate_ingredients(self, ingredients):
         """Валидация на дублирование Ингредиента.
@@ -268,6 +258,5 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                 dict[ingredient['id']] = ingredient['quantity']
         return [
             {'id': key,
-             'quantity': value
-            } for key, value in dict.items()
+             'quantity': value} for key, value in dict.items()
         ]

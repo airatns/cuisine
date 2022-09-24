@@ -1,29 +1,26 @@
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from rest_framework.generics import ListCreateAPIView
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status, filters
-from django.views.decorators.csrf import csrf_protect
-from rest_framework.decorators import api_view, action
-from django.shortcuts import get_object_or_404
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from django.conf import settings
 import os
 from io import BytesIO
-from reportlab.pdfgen import canvas
+
+from django.conf import settings
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.pagesizes import A4
-
-from .models import FavoriteRecipe, Ingredient, Recipe, Tag, ShoppingCart, IngredientForRecipe
-from .serializers import IngredientSerializer, RecipeListSerializer, RecipeCreateSerializer, TagSerializer
-from .serializers import FavoriteSerializer, ShoppingCartSerializer
-from .permissions import AuthorOrReadOnly, ReadOnly
-from rest_framework import permissions, generics
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from rest_framework import filters, generics, permissions, status
+from rest_framework.decorators import action, api_view
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from .models import (FavoriteRecipe, Ingredient, IngredientForRecipe, Recipe,
+                     ShoppingCart, Tag)
+from .permissions import AuthorOrReadOnly, ReadOnly
+from .serializers import (FavoriteSerializer, IngredientSerializer,
+                          RecipeCreateSerializer, RecipeListSerializer,
+                          ShoppingCartSerializer, TagSerializer)
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -71,14 +68,15 @@ class RecipeViewSet(ModelViewSet):
         user = self.request.user
         queryset = self.queryset
         is_favorited = self.request.query_params.get('is_favorited')
-        is_in_shopping_cart = self.request.query_params.get('is_in_shopping_cart')
+        is_in_shopping_cart = self.request.query_params.get(
+            'is_in_shopping_cart')
 
         if is_favorited is not None:
             if is_favorited == '1':
                 queryset = queryset.filter(favorite_recipe__user=user,)
             else:
                 queryset = queryset.exclude(favorite_recipe__user=user,)
-        
+
         if is_in_shopping_cart is not None:
             if is_in_shopping_cart == '1':
                 queryset = queryset.filter(shopper_recipe__user=user,)
@@ -86,7 +84,6 @@ class RecipeViewSet(ModelViewSet):
                 queryset = queryset.exclude(shopper_recipe__user=user,)
 
         return queryset
-
 
     def perform_create(self, serializer):
         """В поле Author передадим объект пользователя, отправшего запрос,
@@ -102,7 +99,8 @@ class RecipeViewSet(ModelViewSet):
 
 
 @api_view(['POST', 'DELETE'])
-@action(detail=True, url_path='favorite', permission_classes=(permissions.IsAuthenticated,),)
+@action(detail=True, url_path='favorite',
+        permission_classes=(permissions.IsAuthenticated,),)
 def fav_recipe(request, recipe_id):
     """Метод по добавлению и удалению рецептов в Избранное.
     """
@@ -118,14 +116,16 @@ def fav_recipe(request, recipe_id):
             return Response({
                 'message': 'Этот рецепт уже находится в Избранном'
             }, status=status.HTTP_400_BAD_REQUEST)
-        favorite_recipe = FavoriteRecipe.objects.create(user=user, recipe=recipe)
+        favorite_recipe = FavoriteRecipe.objects.create(user=user,
+                                                        recipe=recipe)
         serializer = FavoriteSerializer(
             favorite_recipe, context={'request': request}
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     elif request.method == 'DELETE':
-        favorite_recipe = FavoriteRecipe.objects.filter(user=user, recipe=recipe)
+        favorite_recipe = FavoriteRecipe.objects.filter(user=user,
+                                                        recipe=recipe)
         if favorite_recipe.exists():
             favorite_recipe.delete()
             return Response({
@@ -137,7 +137,8 @@ def fav_recipe(request, recipe_id):
 
 
 @api_view(['POST', 'DELETE'])
-@action(detail=True, url_path='shopping_cart', permission_classes=(permissions.IsAuthenticated,),)
+@action(detail=True, url_path='shopping_cart',
+        permission_classes=(permissions.IsAuthenticated,),)
 def shopping_cart(request, recipe_id):
     """Метод для работы со Списком покупок (добавление, удаление рецептов).
     """
@@ -178,7 +179,8 @@ class DownloadShoppingCart(generics.ListAPIView):
         """Метод предоставляет pdf-файл со списком необходимых ингредиентов.
         """
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachement; filename="ShoppingCart.pdf"'
+        response['Content-Disposition'] = (
+            'attachement; filename="ShoppingCart.pdf"')
         folder = settings.FONTS_PATH
         ttf_file = os.path.join(folder, 'PT-Astra-Sans_Regular.ttf')
         pdfmetrics.registerFont(TTFont('PTAstraSans', ttf_file, 'UTF-8'))
@@ -195,10 +197,13 @@ class DownloadShoppingCart(generics.ListAPIView):
 
         user = request.user
         ingredient_list = {}
-        ingredients = IngredientForRecipe.objects.filter(recipe__shopper_recipe__user=user)
+        ingredients = IngredientForRecipe.objects.filter(
+            recipe__shopper_recipe__user=user)
         for item in ingredients:
-            key = f'{item.ingredient.name} ({item.ingredient.measurement_unit})'.capitalize()
-            ingredient_list[key] = ingredient_list.setdefault(key, 0) + item.quantity
+            key = (f'{item.ingredient.name} '
+                   f'({item.ingredient.measurement_unit})'.capitalize())
+            ingredient_list[key] = (
+                ingredient_list.setdefault(key, 0) + item.quantity)
         for key, value in ingredient_list.items():
             p.setFont('PTAstraSans', 10, leading=None)
             message = f'* {key} - {value}'
