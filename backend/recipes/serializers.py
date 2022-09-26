@@ -143,6 +143,34 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
 
+        objs = [
+            IngredientForRecipe(
+                recipe=recipe,
+                ingredient=get_object_or_404(
+                    Ingredient,
+                    pk=ingredient.get('id')
+                ),
+                quantity=ingredient.get('quantity'),
+            )
+            for ingredient in ingredients
+        ]
+        IngredientForRecipe.objects.bulk_create(objs)
+
+        recipe.save()
+        return recipe
+
+    def update(self, recipe, validated_data):
+        """Метод по изменению объекта Рецептов (PATCH-запрос).
+        """
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
+        for item in validated_data:
+            if Recipe._meta.get_field(item):
+                setattr(recipe, item, validated_data[item])
+        recipe.tags.set(tags)
+
+        IngredientForRecipe.objects.filter(recipe=recipe).delete()
+
         for ingredient in ingredients:
             id = ingredient.get('id')
             quantity = ingredient.get('quantity')
@@ -154,29 +182,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         recipe.save()
         return recipe
-
-    def update(self, instance, validated_data):
-        """Метод по изменению объекта Рецептов (PATCH-запрос).
-        """
-        tags = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredients')
-        for item in validated_data:
-            if Recipe._meta.get_field(item):
-                setattr(instance, item, validated_data[item])
-        instance.tags.set(tags)
-
-        IngredientForRecipe.objects.filter(recipe=instance).delete()
-        for ingredient in ingredients:
-            id = ingredient.get('id')
-            quantity = ingredient.get('quantity')
-            current_ingredient = get_object_or_404(Ingredient, pk=id)
-            IngredientForRecipe.objects.create(
-                recipe=instance,
-                ingredient=current_ingredient,
-                quantity=quantity,
-            )
-        instance.save()
-        return instance
 
     def to_representation(self, instance):
         """Метод переопределяет, в каком формате ожидаем увидеть
