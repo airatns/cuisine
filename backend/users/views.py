@@ -87,9 +87,10 @@ def subscribe(request, author_id):
             return Response({
                 'message': 'Вы отписались от данного автора',
             }, status=status.HTTP_204_NO_CONTENT)
-        return Response({
-                'message': 'Вы не подписывались на данного автора',
-            }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'message': 'Вы не подписывались на данного автора'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class Subscriptions(generics.ListAPIView, PageNumberPagination):

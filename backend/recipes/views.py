@@ -131,9 +131,10 @@ def fav_recipe(request, recipe_id):
             return Response({
                 'message': 'Рецепт удален из Избранного',
             }, status=status.HTTP_204_NO_CONTENT)
-        return Response({
-                'message': 'Этого рецепта нет у Вас в Избранном',
-            }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'message': 'Этого рецепта нет у Вас в Избранном'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(['POST', 'DELETE'])
@@ -167,9 +168,10 @@ def shopping_cart(request, recipe_id):
             return Response({
                 'message': 'Рецепт удален из Списка покупок',
             }, status=status.HTTP_204_NO_CONTENT)
-        return Response({
-                'message': 'Этого рецепта нет в Вашем Списке покупок',
-            }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'message': 'Этого рецепта нет в Вашем Списке покупок'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class DownloadShoppingCart(generics.ListAPIView):
@@ -207,8 +209,8 @@ class DownloadShoppingCart(generics.ListAPIView):
         for key, value in ingredient_list.items():
             p.setFont('PTAstraSans', 10, leading=None)
             message = f'* {key} - {value}'
-            p.drawString(x1, y1-12, message)
-            y1 = y1-15
+            p.drawString(x1, y1 - 12, message)
+            y1 = y1 - 15
 
         p.setTitle('Ingredients for purchase')
         p.showPage()
