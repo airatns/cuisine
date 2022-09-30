@@ -5,7 +5,7 @@ from .models import FavoriteRecipe, Ingredient, Recipe, ShoppingCart, Tag
 
 @admin.register(Ingredient)
 class IngredientsAdmin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit')
+    list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name',)
     list_editable = ('name', 'measurement_unit')
     list_display_links = None
