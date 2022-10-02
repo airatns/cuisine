@@ -49,7 +49,7 @@ class IngredientForRecipeListSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='ingredient.name',)
     measurement_unit = serializers.CharField(
         source='ingredient.measurement_unit',
-        # read_only=True
+        read_only=True
     )
     amount = serializers.IntegerField()
 
@@ -79,7 +79,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
     ingredients = IngredientForRecipeListSerializer(
         source='recipe_ingred',
         many=True,
-        # read_only=True
+        read_only=True
     )
     image = Base64ImageField(read_only=True)
     is_favorited = serializers.SerializerMethodField()
@@ -187,16 +187,16 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         """Метод переопределяет, в каком формате ожидаем увидеть
         данные по Рецептам, извлеченные из БД.
         """
-        # serializer = RecipeListSerializer(
-        #     instance,
-        #     context=self.context
-        # )
         serializer = RecipeListSerializer(
             instance,
-            context={
-                'request': self.context.get('request')
-            }
+            context=self.context
         )
+        # serializer = RecipeListSerializer(
+        #     instance,
+        #     context={
+        #         'request': self.context.get('request')
+        #     }
+        # )
         return serializer.data
 
     def validate_name(self, name):
