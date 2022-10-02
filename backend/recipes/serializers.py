@@ -123,7 +123,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     author = UserListSerializer(read_only=True)
     ingredients = IngredientForRecipeCreateSerializer(
         source='recipe_ingred',
-        many=True)
+        many=True
+    )
     image = Base64ImageField()
 
     class Meta:
