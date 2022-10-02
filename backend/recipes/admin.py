@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from .models import FavoriteRecipe, Ingredient, Recipe, ShoppingCart, Tag
+from .models import (FavoriteRecipe, Ingredient, IngredientForRecipe, Recipe,
+                     ShoppingCart, Tag)
+
+
+class IngredientForRecipeInline(admin.TabularInline):
+    model = IngredientForRecipe
+    extra = 0
 
 
 @admin.register(Ingredient)
@@ -16,10 +22,11 @@ class IngredientsAdmin(admin.ModelAdmin):
 class RecipesAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'to_favorites')
     search_fields = ('name', 'author__username')
-    list_filter = ('tags__name', 'recipe_ingred')
+    list_filter = ('tags__name',)
     list_editable = ('name',)
     list_display_links = None
     empty_value_display = '-empty-'
+    inlines = (IngredientForRecipeInline,)
 
     def to_favorites(self, obj):
         """Сколько раз добавили в избранное.
