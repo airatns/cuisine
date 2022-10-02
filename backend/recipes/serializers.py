@@ -76,10 +76,15 @@ class RecipeListSerializer(serializers.ModelSerializer):
     """
     tags = TagSerializer(many=True, read_only=True)
     author = UserListSerializer(read_only=True)
+    # ingredients = IngredientForRecipeListSerializer(
+    #     source='recipe_ingred',
+    #     many=True,
+    #     read_only=True
+    # )
     ingredients = IngredientForRecipeListSerializer(
-        source='recipe_ingred',
+        source='ingred_recipe',
         many=True,
-        read_only=True
+        required=True
     )
     image = Base64ImageField(read_only=True)
     is_favorited = serializers.SerializerMethodField()
@@ -187,6 +192,10 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         """Метод переопределяет, в каком формате ожидаем увидеть
         данные по Рецептам, извлеченные из БД.
         """
+        # serializer = RecipeListSerializer(
+        #     instance,
+        #     context=self.context
+        # )
         serializer = RecipeListSerializer(
             instance,
             context={
