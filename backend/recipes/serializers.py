@@ -62,8 +62,9 @@ class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор определяет, какие поля будут заполнены
     по Ингредиентам для Рецепта при добавлении нового объекта в БД и их типы.
     """
-    id = serializers.IntegerField()
-    # quantity = serializers.IntegerField()
+    # id = serializers.IntegerField()
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    quantity = serializers.IntegerField()
 
     class Meta:
         model = IngredientForRecipe
@@ -146,7 +147,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
-        recipe.tags.add(*tags)
+        recipe.tags.set(tags)
 
         objs = [
             IngredientForRecipe(
@@ -185,7 +186,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 ingredient=current_ingredient,
                 quantity=quantity,
             )
-        recipe.save()
+        # recipe.save()
         return recipe
 
     def to_representation(self, instance):
