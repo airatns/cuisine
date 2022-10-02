@@ -212,21 +212,21 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     )
         return name
 
-    def validate_ingredients(self, ingredients):
-        """Валидация на дублирование Ингредиента.
-        Если несколько раз введен один и тот же Ингредиент,
-        его количество суммируется.
-        """
-        dict = {}
-        for ingredient in ingredients:
-            if ingredient['id'] in dict:
-                dict[ingredient['id']] += ingredient['quantity']
-            else:
-                dict[ingredient['id']] = ingredient['quantity']
-        return [
-            {'id': key,
-             'quantity': value} for key, value in dict.items()
-        ]
+    # def validate_ingredients(self, ingredients):
+    #     """Валидация на дублирование Ингредиента.
+    #     Если несколько раз введен один и тот же Ингредиент,
+    #     его количество суммируется.
+    #     """
+    #     dict = {}
+    #     for ingredient in ingredients:
+    #         if ingredient['id'] in dict:
+    #             dict[ingredient['id']] += ingredient['quantity']
+    #         else:
+    #             dict[ingredient['id']] = ingredient['quantity']
+    #     return [
+    #         {'id': key,
+    #          'quantity': value} for key, value in dict.items()
+    #     ]
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
