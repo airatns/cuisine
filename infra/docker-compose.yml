@@ -19,10 +19,8 @@ services:
     image: airatns/foodgram:v1
     restart: always
     volumes:
-      # - static_value:/app/static/
-      # - media_value:/app/media/
-      - static_value:/backend/static/
-      - media_value:/backend/media/
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - db
     env_file:
