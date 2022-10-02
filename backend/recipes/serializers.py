@@ -51,7 +51,7 @@ class IngredientForRecipeListSerializer(serializers.ModelSerializer):
         source='ingredient.measurement_unit',
         read_only=True
     )
-    quantity = serializers.IntegerField(read_only=True)
+    # quantity = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = IngredientForRecipe
@@ -62,8 +62,7 @@ class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор определяет, какие поля будут заполнены
     по Ингредиентам для Рецепта при добавлении нового объекта в БД и их типы.
     """
-    # id = serializers.IntegerField()
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    id = serializers.IntegerField()
     quantity = serializers.IntegerField()
 
     class Meta:
@@ -77,15 +76,10 @@ class RecipeListSerializer(serializers.ModelSerializer):
     """
     tags = TagSerializer(many=True, read_only=True)
     author = UserListSerializer(read_only=True)
-    # ingredients = IngredientForRecipeListSerializer(
-    #     source='recipe_ingred',
-    #     many=True,
-    #     read_only=True
-    # )
     ingredients = IngredientForRecipeListSerializer(
         source='recipe_ingred',
         many=True,
-        required=True
+        # read_only=True
     )
     image = Base64ImageField(read_only=True)
     is_favorited = serializers.SerializerMethodField()
