@@ -141,7 +141,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
-        recipe.tags.set(tags)
+        recipe.tags.add(*tags)
 
         objs = [
             IngredientForRecipe(
@@ -156,7 +156,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ]
         IngredientForRecipe.objects.bulk_create(objs)
 
-        recipe.save()
+        # recipe.save()
         return recipe
 
     def update(self, recipe, validated_data):
@@ -193,36 +193,36 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         )
         return serializer.data
 
-    # def validate_name(self, name):
-    #     """Валидация на название Рецепта.
-    #     Если у данного автора уже есть Рецепт с таким названием ,
-    #     создание нового Рецепта невозможно.
-    #     """
-    #     if self.context['request'].method == 'POST':
-    #         user = self.context['request'].user
-    #         recipes_by_user = Recipe.objects.filter(author=user)
-    #         for recipe in recipes_by_user:
-    #             if recipe.name.lower() == name.lower():
-    #                 raise serializers.ValidationError(
-    #                     'Рецепт с таким названием уже был опубликован Вами!'
-    #                 )
-    #     return name
+    def validate_name(self, name):
+        """Валидация на название Рецепта.
+        Если у данного автора уже есть Рецепт с таким названием ,
+        создание нового Рецепта невозможно.
+        """
+        if self.context['request'].method == 'POST':
+            user = self.context['request'].user
+            recipes_by_user = Recipe.objects.filter(author=user)
+            for recipe in recipes_by_user:
+                if recipe.name.lower() == name.lower():
+                    raise serializers.ValidationError(
+                        'Рецепт с таким названием уже был опубликован Вами!'
+                    )
+        return name
 
-    # def validate_ingredients(self, ingredients):
-    #     """Валидация на дублирование Ингредиента.
-    #     Если несколько раз введен один и тот же Ингредиент,
-    #     его количество суммируется.
-    #     """
-    #     dict = {}
-    #     for ingredient in ingredients:
-    #         if ingredient['id'] in dict:
-    #             dict[ingredient['id']] += ingredient['quantity']
-    #         else:
-    #             dict[ingredient['id']] = ingredient['quantity']
-    #     return [
-    #         {'id': key,
-    #          'quantity': value} for key, value in dict.items()
-    #     ]
+    def validate_ingredients(self, ingredients):
+        """Валидация на дублирование Ингредиента.
+        Если несколько раз введен один и тот же Ингредиент,
+        его количество суммируется.
+        """
+        dict = {}
+        for ingredient in ingredients:
+            if ingredient['id'] in dict:
+                dict[ingredient['id']] += ingredient['quantity']
+            else:
+                dict[ingredient['id']] = ingredient['quantity']
+        return [
+            {'id': key,
+             'quantity': value} for key, value in dict.items()
+        ]
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
