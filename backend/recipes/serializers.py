@@ -45,13 +45,13 @@ class IngredientForRecipeListSerializer(serializers.ModelSerializer):
     """Сериализатор определяет, в каком формате ожидаем увидеть
     данные по Ингредиентам для Рецепта, извлеченные из БД.
     """
-    id = serializers.IntegerField(source='ingredient__ingred_recipe__id',)
-    name = serializers.CharField(source='ingredient__ingred_recipe__name',)
+    id = serializers.IntegerField(source='ingredient.id',)
+    name = serializers.CharField(source='ingredient.name',)
     measurement_unit = serializers.CharField(
-        source='ingredient__ingred_recipe__measurement_unit',
+        source='ingredient.measurement_unit',
         # read_only=True
     )
-    quantity = serializers.CharField()
+    quantity = serializers.IntegerField()
 
     class Meta:
         model = IngredientForRecipe
@@ -63,7 +63,7 @@ class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
     по Ингредиентам для Рецепта при добавлении нового объекта в БД и их типы.
     """
     id = serializers.IntegerField()
-    quantity = serializers.CharField()
+    quantity = serializers.IntegerField()
 
     class Meta:
         model = IngredientForRecipe
@@ -121,7 +121,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     """
     tags = TagID2ObjectSerializer(many=True, queryset=Tag.objects.all())
     author = UserListSerializer(read_only=True)
-    ingredients = IngredientForRecipeCreateSerializer(many=True)
+    ingredients = IngredientForRecipeCreateSerializer(
+        source='recipe_ingred',
+        many=True)
     image = Base64ImageField()
 
     class Meta:
