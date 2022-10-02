@@ -16,7 +16,8 @@ class Command(BaseCommand):
         print('Loading data')
 
         for row in DictReader(
-            open('../data/ingredients.csv', encoding='utf8')
+            # open('../data/ingredients.csv', encoding='utf8')
+            open('./ingredients.csv', encoding='utf8')
         ):
             data = Ingredient(
                 name=row['name'],
