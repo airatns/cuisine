@@ -12,7 +12,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.7
 
       - name: Install dependencies
         run: |
@@ -60,9 +60,7 @@ jobs:
         script: |
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram:v1
           sudo docker compose stop
-# 5
-          # sudo docker compose rm web
-          sudo docker compose rm backend
+          sudo docker compose rm web
           touch .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env

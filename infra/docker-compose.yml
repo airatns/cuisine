@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 
 services:
   db:
@@ -9,8 +9,7 @@ services:
       # - ../backend/.env
       - ./.env
 
-# 1
-  backend:
+  web:
     # build: ../backend/
     # command: >
     #   sh -c "python manage.py makemigrations users &&
@@ -19,10 +18,9 @@ services:
     #          python manage.py collectstatic --noinput &&"
     image: airatns/foodgram:v1
     restart: always
-# 2
     volumes:
-      - static_value:/backend/static/
-      - media_value:/backend/media/
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - db
     env_file:
@@ -48,12 +46,8 @@ services:
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     depends_on:
-      - backend
-# 3
       - frontend
     
 volumes:
-# 4
-  postgres_data:
   static_value:
   media_value:
