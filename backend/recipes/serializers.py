@@ -64,6 +64,8 @@ class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
     """
     id = serializers.IntegerField(write_only=True)
     quantity = serializers.IntegerField(write_only=True)
+    # id = serializers.IntegerField()
+    # quantity = serializers.IntegerField()
 
     class Meta:
         model = IngredientForRecipe

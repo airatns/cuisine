@@ -9,12 +9,13 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework import filters, generics, permissions, status
+from rest_framework import generics, permissions, status
 from rest_framework.decorators import action, api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from .filters import IngredientFilter
 from .models import (FavoriteRecipe, Ingredient, IngredientForRecipe, Recipe,
                      ShoppingCart, Tag)
 from .permissions import AuthorOrReadOnly, ReadOnly
@@ -28,7 +29,7 @@ class TagViewSet(ReadOnlyModelViewSet):
     """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AuthorOrReadOnly,)
     pagination_class = None
 
 
@@ -37,9 +38,9 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     """
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    permission_classes = (AuthorOrReadOnly,)
     pagination_class = None
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name')
+    filterset_class = IngredientFilter
 
 
 class RecipeViewSet(ModelViewSet):
