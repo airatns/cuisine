@@ -125,7 +125,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     author = UserListSerializer(read_only=True)
     ingredients = IngredientForRecipeCreateSerializer(
         many=True,
-        queryset=Ingredient.objects.all())
+        queryset=IngredientForRecipe.objects.all())
     image = Base64ImageField()
 
     class Meta:
