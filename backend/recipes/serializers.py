@@ -123,9 +123,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     """
     tags = TagID2ObjectSerializer(many=True, queryset=Tag.objects.all())
     author = UserListSerializer(read_only=True)
-    ingredients = IngredientForRecipeCreateSerializer(
-        many=True,
-        queryset=IngredientForRecipe.objects.all())
+    ingredients = IngredientForRecipeCreateSerializer(many=True)
     image = Base64ImageField()
 
     class Meta:
