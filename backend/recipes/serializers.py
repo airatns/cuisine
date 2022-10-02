@@ -45,12 +45,13 @@ class IngredientForRecipeListSerializer(serializers.ModelSerializer):
     """Сериализатор определяет, в каком формате ожидаем увидеть
     данные по Ингредиентам для Рецепта, извлеченные из БД.
     """
-    id = serializers.IntegerField(source='ingred_recipe__id',)
-    name = serializers.CharField(source='ingred_recipe__name',)
+    id = serializers.IntegerField(source='recipe_ingred__id',)
+    name = serializers.CharField(source='recipe_ingred__name',)
     measurement_unit = serializers.CharField(
-        source='ingred_recipe__measurement_unit',
+        source='recipe_ingred__measurement_unit',
         # read_only=True
     )
+    quantity = serializers.CharField()
 
     class Meta:
         model = IngredientForRecipe
@@ -62,6 +63,7 @@ class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
     по Ингредиентам для Рецепта при добавлении нового объекта в БД и их типы.
     """
     id = serializers.IntegerField()
+    quantity = serializers.CharField()
 
     class Meta:
         model = IngredientForRecipe
