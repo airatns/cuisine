@@ -45,11 +45,11 @@ class IngredientForRecipeListSerializer(serializers.ModelSerializer):
     """Сериализатор определяет, в каком формате ожидаем увидеть
     данные по Ингредиентам для Рецепта, извлеченные из БД.
     """
-    id = serializers.IntegerField(source='ingredient.id', read_only=True)
-    name = serializers.CharField(source='ingredient.name', read_only=True)
+    id = serializers.IntegerField(source='ingredient.id',)
+    name = serializers.CharField(source='ingredient.name',)
     measurement_unit = serializers.CharField(
         source='ingredient.measurement_unit',
-        read_only=True
+        # read_only=True
     )
 
     class Meta:
@@ -212,21 +212,21 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     )
         return name
 
-    # def validate_ingredients(self, ingredients):
-    #     """Валидация на дублирование Ингредиента.
-    #     Если несколько раз введен один и тот же Ингредиент,
-    #     его количество суммируется.
-    #     """
-    #     dict = {}
-    #     for ingredient in ingredients:
-    #         if ingredient['id'] in dict:
-    #             dict[ingredient['id']] += ingredient['quantity']
-    #         else:
-    #             dict[ingredient['id']] = ingredient['quantity']
-    #     return [
-    #         {'id': key,
-    #          'quantity': value} for key, value in dict.items()
-    #     ]
+    def validate_ingredients(self, ingredients):
+        """Валидация на дублирование Ингредиента.
+        Если несколько раз введен один и тот же Ингредиент,
+        его количество суммируется.
+        """
+        dict = {}
+        for ingredient in ingredients:
+            if ingredient['id'] in dict:
+                dict[ingredient['id']] += ingredient['quantity']
+            else:
+                dict[ingredient['id']] = ingredient['quantity']
+        return [
+            {'id': key,
+             'quantity': value} for key, value in dict.items()
+        ]
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
