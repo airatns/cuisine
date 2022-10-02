@@ -62,10 +62,8 @@ class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор определяет, какие поля будут заполнены
     по Ингредиентам для Рецепта при добавлении нового объекта в БД и их типы.
     """
-    id = serializers.IntegerField(write_only=True)
-    quantity = serializers.IntegerField(write_only=True)
-    # id = serializers.IntegerField()
-    # quantity = serializers.IntegerField()
+    id = serializers.IntegerField()
+    quantity = serializers.IntegerField()
 
     class Meta:
         model = IngredientForRecipe
