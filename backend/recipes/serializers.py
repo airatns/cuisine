@@ -159,7 +159,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ]
         IngredientForRecipe.objects.bulk_create(objs)
 
-        # recipe.save()
+        recipe.save()
         return recipe
 
     def update(self, recipe, validated_data):
@@ -183,7 +183,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 ingredient=current_ingredient,
                 amount=amount,
             )
-        # recipe.save()
+        recipe.save()
         return recipe
 
     def to_representation(self, instance):
