@@ -63,7 +63,7 @@ class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
     по Ингредиентам для Рецепта при добавлении нового объекта в БД и их типы.
     """
     id = serializers.IntegerField()
-    quantity = serializers.IntegerField()
+    # quantity = serializers.IntegerField()
 
     class Meta:
         model = IngredientForRecipe
