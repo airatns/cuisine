@@ -189,7 +189,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         """
         serializer = RecipeListSerializer(
             instance,
-            context=self.context
+            context={
+                'request': self.context.get('request')
+            }
         )
         return serializer.data
 
