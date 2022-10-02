@@ -51,11 +51,11 @@ class IngredientForRecipeListSerializer(serializers.ModelSerializer):
         source='ingredient.measurement_unit',
         # read_only=True
     )
-    quantity = serializers.IntegerField()
+    amount = serializers.IntegerField()
 
     class Meta:
         model = IngredientForRecipe
-        fields = ('id', 'name', 'measurement_unit', 'quantity',)
+        fields = ('id', 'name', 'measurement_unit', 'amount',)
 
 
 class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
@@ -63,11 +63,11 @@ class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
     по Ингредиентам для Рецепта при добавлении нового объекта в БД и их типы.
     """
     id = serializers.IntegerField()
-    quantity = serializers.IntegerField()
+    amount = serializers.IntegerField()
 
     class Meta:
         model = IngredientForRecipe
-        fields = ('id', 'quantity')
+        fields = ('id', 'amount')
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
@@ -153,7 +153,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     Ingredient,
                     pk=ingredient.get('id')
                 ),
-                quantity=ingredient.get('quantity'),
+                amount=ingredient.get('amount'),
             )
             for ingredient in ingredients
         ]
@@ -176,12 +176,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
         for ingredient in ingredients:
             id = ingredient.get('id')
-            quantity = ingredient.get('quantity')
+            amount = ingredient.get('amount')
             current_ingredient = get_object_or_404(Ingredient, pk=id)
             IngredientForRecipe.objects.create(
                 recipe=recipe,
                 ingredient=current_ingredient,
-                quantity=quantity,
+                amount=amount,
             )
         # recipe.save()
         return recipe
@@ -225,12 +225,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         dict = {}
         for ingredient in ingredients:
             if ingredient['id'] in dict:
-                dict[ingredient['id']] += ingredient['quantity']
+                dict[ingredient['id']] += ingredient['amount']
             else:
-                dict[ingredient['id']] = ingredient['quantity']
+                dict[ingredient['id']] = ingredient['amount']
         return [
             {'id': key,
-             'quantity': value} for key, value in dict.items()
+             'amount': value} for key, value in dict.items()
         ]
 
 
@@ -267,10 +267,10 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         dict = {}
         for ingredient in ingredients:
             if ingredient['id'] in dict:
-                dict[ingredient['id']] += ingredient['quantity']
+                dict[ingredient['id']] += ingredient['amount']
             else:
-                dict[ingredient['id']] = ingredient['quantity']
+                dict[ingredient['id']] = ingredient['amount']
         return [
             {'id': key,
-             'quantity': value} for key, value in dict.items()
+             'amount': value} for key, value in dict.items()
         ]

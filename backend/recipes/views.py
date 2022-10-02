@@ -206,7 +206,7 @@ class DownloadShoppingCart(generics.ListAPIView):
             key = (f'{item.ingredient.name} '
                    f'({item.ingredient.measurement_unit})'.capitalize())
             ingredient_list[key] = (
-                ingredient_list.setdefault(key, 0) + item.quantity)
+                ingredient_list.setdefault(key, 0) + item.amount)
         for key, value in ingredient_list.items():
             p.setFont('PTAstraSans', 10, leading=None)
             message = f'* {key} - {value}'

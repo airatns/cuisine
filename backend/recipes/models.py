@@ -112,7 +112,7 @@ class IngredientForRecipe(models.Model):
         related_name='recipe_ingred',
         verbose_name='Рецепт',
     )
-    quantity = models.PositiveSmallIntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name='Количество ингредиентов',
         validators=[
             MinValueValidator(1)
@@ -125,7 +125,7 @@ class IngredientForRecipe(models.Model):
 
     def __str__(self):
         return (f'{self.ingredient.name} ({self.ingredient.measurement_unit})'
-                f' - {self.quantity}')
+                f' - {self.amount}')
 
 
 class FavoriteRecipe(models.Model):
