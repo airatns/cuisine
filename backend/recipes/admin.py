@@ -16,8 +16,7 @@ class IngredientsAdmin(admin.ModelAdmin):
 class RecipesAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'to_favorites')
     search_fields = ('name', 'author__username')
-    list_filter = ('tags__name',)
-    filter_horizontal = ['ingredients']
+    list_filter = ('tags__name', 'recipe_ingred')
     list_editable = ('name',)
     list_display_links = None
     empty_value_display = '-empty-'
