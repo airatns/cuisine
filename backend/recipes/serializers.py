@@ -51,7 +51,6 @@ class IngredientForRecipeListSerializer(serializers.ModelSerializer):
         source='ingredient.measurement_unit',
         read_only=True
     )
-    # quantity = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = IngredientForRecipe
@@ -63,7 +62,6 @@ class IngredientForRecipeCreateSerializer(serializers.ModelSerializer):
     по Ингредиентам для Рецепта при добавлении нового объекта в БД и их типы.
     """
     id = serializers.IntegerField()
-    quantity = serializers.IntegerField()
 
     class Meta:
         model = IngredientForRecipe
