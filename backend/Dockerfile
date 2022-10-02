@@ -1,6 +1,7 @@
 FROM python:3.7-slim
 
-WORKDIR /app
+# 6
+WORKDIR /backend
 
 COPY . .
 
