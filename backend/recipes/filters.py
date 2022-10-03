@@ -1,6 +1,6 @@
 import django_filters
 
-from .models import Ingredient, Recipe
+from .models import Ingredient, Recipe, Tag
 
 
 class IngredientFilter(django_filters.FilterSet):
@@ -22,7 +22,7 @@ class RecipeTagFilter(django_filters.FilterSet):
     """
     tags = django_filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
-        # queryset=Tag.objects.all(),
+        queryset=Tag.objects.all(),
         # to_field_name='slug'
     )
 
