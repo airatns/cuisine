@@ -13,6 +13,7 @@ router.register('recipes', RecipeViewSet, basename='recipes')
 
 
 urlpatterns = [
+    path('users/me/', me, name='me'),
     path('recipes/<int:recipe_id>/favorite/', fav_recipe, name='favorite'),
     path('recipes/<int:recipe_id>/shopping_cart/',
          shopping_cart, name='shopping'),
@@ -21,7 +22,6 @@ urlpatterns = [
 
     path('users/', UserListCreate.as_view(), name='users'),
     path('users/<int:pk>/', UserDetail.as_view(), name='profile'),
-    path('users/me/', me, name='me'),
     path('users/<int:author_id>/subscribe/', subscribe, name='subscribe'),
     path('users/subscriptions/',
          Subscriptions.as_view(), name='subscriptions'),
