@@ -135,6 +135,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                   'text',
                   'cooking_time',)
 
+    def get_queryset(self):
+        query = self.request.query_params.get('tags')
+        if query:
+            return Recipe.objects.all()
+        return None
+
     def create(self, validated_data):
         """Метод по созданию нового объекта Рецептов (POST-запрос).
         """
