@@ -95,11 +95,11 @@ def subscribe(request, author_id):
         )
 
 
-class Subscriptions(generics.ListAPIView, RecipePagination):
+class Subscriptions(generics.ListAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscribeSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    # pagination_class = SubscriptionPagination
+    pagination_class = RecipePagination
 
     def get(self, request):
         """Метод по выводу всех Подписок на автора текущего Пользователя.
