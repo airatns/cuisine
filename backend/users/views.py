@@ -53,7 +53,7 @@ class MeDetail(generics.RetrieveAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET', 'POST', 'DELETE'])
+@api_view(['POST', 'DELETE'])
 @action(detail=False, url_path='subscribe',
         permission_classes=(permissions.IsAuthenticated,),)
 def subscribe(request, author_id):
@@ -77,7 +77,7 @@ def subscribe(request, author_id):
             }, status=status.HTTP_400_BAD_REQUEST)
         subscription = Subscription.objects.create(user=user, author=author)
         serializer = SubscribeSerializer(
-            subscription, context={'request': request}
+            subscription,
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
