@@ -47,8 +47,7 @@ class MeDetail(views.APIView):
     # pagination_class = RecipePagination
 
     def get(self, request):
-        user = self.request.user
-        user = User.objects.filter(id=user)
+        user = User.objects.get(id=self.request.user.id)
         serializer = UserListSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
