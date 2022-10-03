@@ -51,8 +51,8 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (AuthorOrReadOnly,)
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = RecipeTagFilter
     filterset_fields = ('author', 'tags',)
+    filterset_class = RecipeTagFilter
 
     def get_permissions(self):
         if self.action == 'retrieve':
