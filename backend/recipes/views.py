@@ -146,10 +146,10 @@ def shopping_cart(request, recipe_id):
     """Метод для работы со Списком покупок (добавление, удаление рецептов).
     """
     user = request.user
-    if user.is_anonymous:
-        return Response({
-            'message': 'Пожалуйста, войдите в Вашу учетную систему',
-        }, status=status.HTTP_401_UNAUTHORIZED)
+    # if user.is_anonymous:
+    #     return Response({
+    #         'message': 'Пожалуйста, войдите в Вашу учетную систему',
+    #     }, status=status.HTTP_401_UNAUTHORIZED)
 
     recipe = get_object_or_404(Recipe, pk=recipe_id)
     if request.method == 'POST':
