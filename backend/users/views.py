@@ -56,7 +56,7 @@ class MeDetail(generics.RetrieveAPIView):
 @api_view(['GET', 'POST', 'DELETE'])
 @action(detail=False, url_path='subscribe',
         permission_classes=(permissions.IsAuthenticated,),)
-def subscribe(request, id):
+def subscribe(request, author_id):
     """Метод по созданию и удалению Подписки на автора.
     """
     user = request.user
@@ -65,7 +65,7 @@ def subscribe(request, id):
             'message': 'Пожалуйста, войдите в Вашу учетную систему',
         }, status=status.HTTP_401_UNAUTHORIZED)
 
-    author = get_object_or_404(User, pk=id)
+    author = get_object_or_404(User, pk=author_id)
     if request.method == 'POST':
         if user == author:
             return Response({
