@@ -171,15 +171,19 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
         IngredientForRecipe.objects.filter(recipe=recipe).delete()
 
-        for ingredient in ingredients:
-            id = ingredient.get('id')
-            amount = ingredient.get('amount')
-            current_ingredient = get_object_or_404(Ingredient, pk=id)
-            IngredientForRecipe.objects.create(
+        objs = [
+            IngredientForRecipe(
                 recipe=recipe,
-                ingredient=current_ingredient,
-                amount=amount,
+                ingredient=get_object_or_404(
+                    Ingredient,
+                    pk=ingredient.get('id')
+                ),
+                amount=ingredient.get('amount'),
             )
+            for ingredient in ingredients
+        ]
+        IngredientForRecipe.objects.bulk_create(objs)
+
         recipe.save()
         return recipe
 
