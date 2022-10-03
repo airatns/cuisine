@@ -101,7 +101,7 @@ class RecipeViewSet(ModelViewSet):
 
 
 @api_view(['POST', 'DELETE'])
-@action(detail=True, url_path='favorite',
+@action(detail=False, url_path='favorite',
         permission_classes=(permissions.IsAuthenticated,),)
 def fav_recipe(request, recipe_id):
     """Метод по добавлению и удалению рецептов в Избранное.
@@ -140,7 +140,7 @@ def fav_recipe(request, recipe_id):
 
 
 @api_view(['POST', 'DELETE'])
-@action(detail=True, url_path='shopping_cart',
+@action(detail=False, url_path='shopping_cart',
         permission_classes=(permissions.IsAuthenticated,),)
 def shopping_cart(request, recipe_id):
     """Метод для работы со Списком покупок (добавление, удаление рецептов).
