@@ -182,7 +182,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
             for ingredient in ingredients
         ]
-        IngredientForRecipe.objects.bulk_create(objs)
+        IngredientForRecipe.objects.bulk_update(objs)
 
         recipe.save()
         return recipe
