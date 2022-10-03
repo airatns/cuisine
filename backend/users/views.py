@@ -5,6 +5,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from .models import Subscription, User
+from .pagination import SubscriptionPagination
 from .serializers import (SubscribeSerializer, UserDetailSerializer,
                           UserListSerializer, UserRegistrSerializer)
 
@@ -93,10 +94,11 @@ def subscribe(request, author_id):
         )
 
 
-class Subscriptions(generics.ListAPIView, PageNumberPagination):
+class Subscriptions(generics.ListAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscribeSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = SubscriptionPagination
 
     def get(self, request):
         """Метод по выводу всех Подписок на автора текущего Пользователя.
