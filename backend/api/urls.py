@@ -3,7 +3,7 @@ from recipes.views import (DownloadShoppingCart, IngredientViewSet,
                            RecipeViewSet, TagViewSet, fav_recipe,
                            shopping_cart)
 from rest_framework.routers import DefaultRouter
-from users.views import (MeDetail, Subscriptions, UserDetail, UserListCreate,
+from users.views import (Subscriptions, UserDetail, UserListCreate, me,
                          subscribe)
 
 router = DefaultRouter()
@@ -21,7 +21,7 @@ urlpatterns = [
 
     path('users/', UserListCreate.as_view(), name='users'),
     path('users/<int:pk>/', UserDetail.as_view(), name='profile'),
-    path('users/me/', MeDetail.as_view(), name='me'),
+    path('users/me/', me, name='me'),
     path('users/<int:author_id>/subscribe/', subscribe, name='subscribe'),
     path('users/subscriptions/',
          Subscriptions.as_view(), name='subscriptions'),
