@@ -1,3 +1,8 @@
+http://51.250.25.11/
+admin@admin.ru
+admin
+
+
 # Foodgram
 
 ![example workflow](https://github.com/airatns/foodgram-project-react/actions/workflows/main.yml/badge.svg)
