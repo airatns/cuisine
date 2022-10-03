@@ -40,16 +40,17 @@ class UserDetail(generics.RetrieveAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class MeDetail(generics.RetrieveAPIView):
+class MeDetail(generics.ListAPIView):
     """Вывод на экран данных о текущем Пользователе.
     """
     queryset = User.objects.all()
     serializer_class = UserListSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    # pagination_class = RecipePagination
 
     def get(self, request):
-        current_user = get_object_or_404(User, username=request.user.username)
-        serializer = UserListSerializer(current_user,)
+        user = request.user
+        serializer = UserListSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

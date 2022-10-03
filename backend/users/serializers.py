@@ -29,10 +29,17 @@ class UserRegistrSerializer(serializers.ModelSerializer):
 class UserListSerializer(serializers.ModelSerializer):
     """Сериализатор на вывод на экран данных о пользователе(-ях).
     """
+    id = serializers.ReadOnlyField()
+    email = serializers.ReadOnlyField()
+    username = serializers.ReadOnlyField()
+    first_name = serializers.ReadOnlyField()
+    last_name = serializers.ReadOnlyField()
+    is_subscribed = serializers.ReadOnlyField(default='false')
+
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'last_name',
-                  'first_name', 'is_subscribed')
+                  'first_name', 'is_subscribed',)
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
