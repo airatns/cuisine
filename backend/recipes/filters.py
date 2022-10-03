@@ -1,6 +1,6 @@
 import django_filters
 
-from .models import Ingredient, Recipe, Tag
+from .models import Ingredient, Recipe
 
 
 class IngredientFilter(django_filters.FilterSet):
@@ -21,7 +21,6 @@ class RecipeTagFilter(django_filters.FilterSet):
     """Кастомный фильтр Рецепта по тегам.
     """
     tags = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tag.objects.all(),
         field_name='tags__slug',
     )
     is_favorited = django_filters.BooleanFilter(method='get_is_favorited')
@@ -30,16 +29,16 @@ class RecipeTagFilter(django_filters.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
+        fields = ('author',)
 
     def get_is_favorited(self, queryset, name, value):
         if value:
-            return Recipe.objects.filter(
-                favorite_user__user=self.request.user
+            return queryset.filter(
+                favorite_recipe__user=self.request.user
             )
-        return Recipe.objects.all()
+        return queryset
 
     def get_is_in_shopping_cart(self, queryset, name, value):
         if value:
-            return Recipe.objects.filter(shopper_user__user=self.request.user)
-        return Recipe.objects.all()
+            return queryset.filter(shopper_recipe__user=self.request.user)
+        return queryset
