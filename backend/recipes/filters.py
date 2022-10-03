@@ -20,22 +20,22 @@ class IngredientFilter(django_filters.FilterSet):
 class RecipeTagFilter(django_filters.FilterSet):
     """Кастомный фильтр Рецепта по тегам.
     """
-    author = django_filters.NumberFilter(
-        field_name='author__id',
-        lookup_expr='exact'
-    )
+    # author = django_filters.NumberFilter(
+    #     field_name='author__id',
+    #     lookup_expr='exact'
+    # )
     tags = django_filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         queryset=Tag.objects.all(),
         to_field_name='slug'
     )
-    is_favorited = django_filters.BooleanFilter(field_name='is_favorited')
-    is_in_shopping_cart = django_filters.BooleanFilter(
-        field_name='is_in_shopping_cart')
+    # is_favorited = django_filters.BooleanFilter(field_name='is_favorited')
+    # is_in_shopping_cart = django_filters.BooleanFilter(
+    #     field_name='is_in_shopping_cart')
 
     class Meta:
         model = Recipe
-        fields = ['author', 'tags', 'is_favorited', 'is_in_shopping_cart']
+        fields = ['tags']
 
     # def get_is_favorited(self, queryset, name, value):
     #     if value:
