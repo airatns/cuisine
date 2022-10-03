@@ -120,9 +120,6 @@ def fav_recipe(request, recipe_id):
             }, status=status.HTTP_400_BAD_REQUEST)
         favorite_recipe = FavoriteRecipe.objects.create(user=user,
                                                         recipe=recipe)
-        # serializer = FavoriteSerializer(
-        #     favorite_recipe, context={'request': request}
-        # )
         serializer = FavoriteSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -159,9 +156,7 @@ def shopping_cart(request, recipe_id):
                 'message': 'Этот рецепт уже находится в Списке покупок'
             }, status=status.HTTP_400_BAD_REQUEST)
         shopping_cart = ShoppingCart.objects.create(user=user, recipe=recipe)
-        serializer = ShoppingCartSerializer(
-            shopping_cart, context={'request': request}
-        )
+        serializer = ShoppingCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     elif request.method == 'DELETE':
