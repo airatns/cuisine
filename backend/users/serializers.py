@@ -77,8 +77,8 @@ class SubscribeSerializer(serializers.ModelSerializer):
             user=obj.user, author=obj.author
         ).exists()
 
-    def get_recipes(self, obj):
-        recipes_limit = self.request.GET.get('recipes_limit')
+    def get_recipes(self, request, obj):
+        recipes_limit = request.GET.get('recipes_limit')
 
         author = User.objects.get(id=obj.author.id)
         recipes = Recipe.objects.filter(author=author)
