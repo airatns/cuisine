@@ -4,7 +4,7 @@ from io import BytesIO
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-# from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -50,9 +50,9 @@ class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeListSerializer
     permission_classes = (AuthorOrReadOnly,)
     pagination_class = PageNumberPagination
-    # filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeTagFilter
-    # filterset_fields = ('author', 'tags',)
+    filterset_fields = ('author', 'tags',)
 
     def get_permissions(self):
         if self.action == 'retrieve':
