@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404
+from recipes.pagination import RecipePagination
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import action, api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from .models import Subscription, User
-from .pagination import SubscriptionPagination
+# from .pagination import SubscriptionPagination
 from .serializers import (SubscribeSerializer, UserDetailSerializer,
                           UserListSerializer, UserRegistrSerializer)
 
@@ -94,7 +95,7 @@ def subscribe(request, author_id):
         )
 
 
-class Subscriptions(generics.ListAPIView, SubscriptionPagination):
+class Subscriptions(generics.ListAPIView, RecipePagination):
     queryset = Subscription.objects.all()
     serializer_class = SubscribeSerializer
     permission_classes = (permissions.IsAuthenticated,)
