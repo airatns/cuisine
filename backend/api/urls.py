@@ -21,7 +21,7 @@ urlpatterns = [
 
     path('users/', UserListCreate.as_view(), name='users'),
     path('users/<int:pk>/', UserDetail.as_view(), name='profile'),
-    path('users/me/', MeDetail.as_view({'get': 'list'}), name='me'),
+    path('users/me/', MeDetail.as_view(), name='me'),
     path('users/<int:author_id>/subscribe/', subscribe, name='subscribe'),
     path('users/subscriptions/',
          Subscriptions.as_view(), name='subscriptions'),

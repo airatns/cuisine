@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from recipes.pagination import RecipePagination
-from rest_framework import generics, permissions, status, viewsets
+from rest_framework import generics, permissions, status
 from rest_framework.decorators import action, api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -40,17 +40,17 @@ class UserDetail(generics.RetrieveAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class MeDetail(viewsets.ModelViewSet):
+class MeDetail(generics.ListAPIView):
     """Вывод на экран данных о текущем Пользователе.
     """
     queryset = User.objects.all()
     serializer_class = UserListSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get(self, request, *args, **kwargs):
-        self.object = get_object_or_404(User, pk=request.user.id)
-        serializer = self.get_serializer(self.object)
-        return Response(serializer.data)
+    def get(self, request):
+        current_user = get_object_or_404(User, username=request.user.username)
+        serializer = UserListSerializer(current_user,)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST', 'DELETE'])
