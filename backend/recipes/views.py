@@ -50,6 +50,7 @@ class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeListSerializer
     permission_classes = (AuthorOrReadOnly,)
     pagination_class = PageNumberPagination
+    pagination_class.page_size = 5
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('author', 'tags',)
     filterset_class = RecipeTagFilter
