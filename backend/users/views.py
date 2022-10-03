@@ -40,7 +40,7 @@ class UserDetail(generics.RetrieveAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class MeDetail(generics.ListAPIView):
+class MeDetail(generics.RetrieveAPIView):
     """Вывод на экран данных о текущем Пользователе.
     """
     queryset = User.objects.all()
