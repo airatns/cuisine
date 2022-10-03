@@ -24,7 +24,22 @@ class RecipeTagFilter(django_filters.FilterSet):
         queryset=Tag.objects.all(),
         field_name='tags__slug',
     )
+    is_favorited = django_filters.BooleanFilter(method='get_is_favorited')
+    is_in_shopping_cart = django_filters.BooleanFilter(
+        method='get_is_in_shopping_cart')
 
     class Meta:
         model = Recipe
-        fields = ('tags',)
+        fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
+
+    def get_is_favorited(self, queryset, name, value):
+        if value:
+            return Recipe.objects.filter(
+                favorite_user__user=self.request.user
+            )
+        return Recipe.objects.all()
+
+    def get_is_in_shopping_cart(self, queryset, name, value):
+        if value:
+            return Recipe.objects.filter(shopper_user__user=self.request.user)
+        return Recipe.objects.all()
