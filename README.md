@@ -1,6 +1,4 @@
-http://51.250.25.11/
-admin@admin.ru
-admin
+http://51.250.25.11/ | admin@admin.ru | admin
 
 
 # Foodgram
