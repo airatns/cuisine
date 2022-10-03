@@ -1,6 +1,6 @@
 import django_filters
 
-from .models import Ingredient, Tag
+from .models import Ingredient, Recipe, Tag
 
 
 class IngredientFilter(django_filters.FilterSet):
@@ -20,11 +20,11 @@ class IngredientFilter(django_filters.FilterSet):
 class RecipeTagFilter(django_filters.FilterSet):
     """Кастомный фильтр Рецепта по тегам.
     """
-    slug = django_filters.ChoiceFilter(
-        field_name='slug',
-        lookup_expr='istartswith'
+    tags = django_filters.ModelMultipleChoiceFilter(
+        queryset=Tag.objects.all(),
+        field_name='tags__slug',
     )
 
     class Meta:
-        model = Tag
-        fields = ('slug',)
+        model = Recipe
+        fields = ('tags',)

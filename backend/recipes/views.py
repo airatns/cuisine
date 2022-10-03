@@ -31,7 +31,6 @@ class TagViewSet(ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     permission_classes = (AuthorOrReadOnly,)
     pagination_class = None
-    filterset_class = RecipeTagFilter
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
@@ -52,6 +51,7 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (AuthorOrReadOnly,)
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeTagFilter
     filterset_fields = ('author', 'tags',)
 
     def get_permissions(self):
