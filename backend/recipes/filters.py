@@ -1,4 +1,5 @@
 import django_filters
+from users.models import User
 
 from .models import Ingredient, Recipe, Tag
 
@@ -17,13 +18,16 @@ class IngredientFilter(django_filters.FilterSet):
         fields = ('name',)
 
 
-class RecipeTagFilter(django_filters.FilterSet):
+class RecipeFilter(django_filters.FilterSet):
     """Кастомный фильтр Рецепта по тегам.
     """
     tags = django_filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         queryset=Tag.objects.all(),
         to_field_name='slug'
+    )
+    author = django_filters.ModelChoiceFilter(
+        queryset=User.objects.all(),
     )
 
     class Meta:

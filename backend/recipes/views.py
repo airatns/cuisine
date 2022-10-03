@@ -14,7 +14,7 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from .filters import IngredientFilter, RecipeTagFilter
+from .filters import IngredientFilter, RecipeFilter
 from .models import (FavoriteRecipe, Ingredient, IngredientForRecipe, Recipe,
                      ShoppingCart, Tag)
 from .pagination import RecipePagination
@@ -52,7 +52,7 @@ class RecipeViewSet(ModelViewSet):
     pagination_class = RecipePagination
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('author', 'tags',)
-    filterset_class = RecipeTagFilter
+    filterset_class = RecipeFilter
 
     def get_permissions(self):
         if self.action == 'retrieve':
