@@ -79,12 +79,12 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
+        recipes_limit = request.GET.get('recipes_limit')
         author = User.objects.get(id=obj.author.id)
         recipes = Recipe.objects.filter(author=author)
-        recipes_limit = request.GET.get('recipes_limit')
         serializer = RecipeInCartSerializer(
             recipes,
-            read_only=True,
+            # read_only=True,
             many=True,
         )
         if recipes_limit:
