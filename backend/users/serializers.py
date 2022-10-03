@@ -49,6 +49,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 
 class RecipeInCartSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Recipe
         fields = ['id', 'name', 'image', 'cooking_time']
@@ -90,6 +91,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def get_recipes_count(self, obj):
-        author = User.objects.get(id=obj.author.id)
-        count = Recipe.objects.filter(author=author).count()
+        # author = User.objects.get(id=obj.author.id)
+        # count = Recipe.objects.filter(author=author).count()
+        count = Recipe.objects.filter(author=obj.author).count()
         return count

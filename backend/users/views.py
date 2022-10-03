@@ -54,7 +54,7 @@ class MeDetail(generics.RetrieveAPIView):
 
 
 @api_view(['POST', 'DELETE'])
-@action(detail=False, url_path='subscribe',
+@action(detail=True, url_path='subscribe',
         permission_classes=(permissions.IsAuthenticated,),)
 def subscribe(request, author_id):
     """Метод по созданию и удалению Подписки на автора.
@@ -76,7 +76,9 @@ def subscribe(request, author_id):
                 'message': 'Вы уже подписаны на этого автора'
             }, status=status.HTTP_400_BAD_REQUEST)
         subscription = Subscription.objects.create(user=user, author=author)
-        serializer = SubscribeSerializer(author)
+        serializer = SubscribeSerializer(
+            subscription, context={'request': request}
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     elif request.method == 'DELETE':
