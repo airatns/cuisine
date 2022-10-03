@@ -141,7 +141,7 @@ def fav_recipe(request, recipe_id):
 
 @api_view(['POST', 'DELETE'])
 @action(detail=False, url_path='shopping_cart',
-        permission_classes=(permissions.IsAuthenticated,),)
+        permission_classes=(permissions.AllowAny,),)
 def shopping_cart(request, recipe_id):
     """Метод для работы со Списком покупок (добавление, удаление рецептов).
     """
