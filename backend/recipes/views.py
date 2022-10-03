@@ -120,9 +120,10 @@ def fav_recipe(request, recipe_id):
             }, status=status.HTTP_400_BAD_REQUEST)
         favorite_recipe = FavoriteRecipe.objects.create(user=user,
                                                         recipe=recipe)
-        serializer = FavoriteSerializer(
-            favorite_recipe, context={'request': request}
-        )
+        # serializer = FavoriteSerializer(
+        #     favorite_recipe, context={'request': request}
+        # )
+        serializer = FavoriteSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     elif request.method == 'DELETE':
