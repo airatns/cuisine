@@ -65,7 +65,7 @@ def subscribe(request, id):
             'message': 'Пожалуйста, войдите в Вашу учетную систему',
         }, status=status.HTTP_401_UNAUTHORIZED)
 
-    author = get_object_or_404(User, id=id)
+    author = get_object_or_404(User, pk=id)
     if request.method == 'POST':
         if user == author:
             return Response({
