@@ -77,7 +77,7 @@ def subscribe(request, author_id):
             }, status=status.HTTP_400_BAD_REQUEST)
         subscription = Subscription.objects.create(user=user, author=author)
         serializer = SubscribeSerializer(
-            subscription,
+            subscription, context={'request': request}
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
