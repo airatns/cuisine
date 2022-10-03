@@ -12,13 +12,14 @@ from reportlab.pdfgen import canvas
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import action, api_view
 # from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import IngredientFilter, RecipeTagFilter
 from .models import (FavoriteRecipe, Ingredient, IngredientForRecipe, Recipe,
                      ShoppingCart, Tag)
-from .pagination import RecipePagination
+# from .pagination import RecipePagination
 from .permissions import AuthorOrReadOnly, ReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeListSerializer,
@@ -50,9 +51,9 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
     permission_classes = (AuthorOrReadOnly,)
-    pagination_class = RecipePagination
-    # pagination_class = PageNumberPagination
-    # pagination_class.page_size = 5
+    # pagination_class = RecipePagination
+    pagination_class = LimitOffsetPagination
+    pagination_class.page_size = 5
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('author', 'tags',)
     filterset_class = RecipeTagFilter
