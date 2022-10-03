@@ -191,12 +191,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             instance,
             context=self.context
         )
-        # serializer = RecipeListSerializer(
-        #     instance,
-        #     context={
-        #         'request': self.context.get('request')
-        #     }
-        # )
         return serializer.data
 
     def validate_name(self, name):

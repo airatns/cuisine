@@ -50,9 +50,9 @@ class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeListSerializer
     permission_classes = (AuthorOrReadOnly,)
     pagination_class = PageNumberPagination
-    filter_backends = (DjangoFilterBackend,)
+    # filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeTagFilter
-    filterset_fields = ('author', 'tags',)
+    # filterset_fields = ('author', 'tags',)
 
     def get_permissions(self):
         if self.action == 'retrieve':
