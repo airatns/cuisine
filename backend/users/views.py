@@ -48,7 +48,7 @@ class MeDetail(views.APIView):
 
     def get(self, request):
         user = self.request.user
-        user = User.objects.filter(user=user)
+        user = User.objects.filter(id=user)
         serializer = UserListSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
