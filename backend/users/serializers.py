@@ -80,13 +80,11 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         request = self.context.get('request')
         recipes_limit = request.GET.get('recipes_limit')
-
-        queryset = Recipe.objects.filter(author=obj.author)
-        if recipes_limit:
-            queryset = queryset[:int(recipes_limit)]
+        recipes = Recipe.objects.filter(author=obj.author)
+        recipes = recipes[:int(recipes_limit)]
         serializer = RecipeInCartSerializer(
-            queryset,
-            # read_only=True,
+            recipes,
+            read_only=True,
             many=True,
         )
         return serializer.data
