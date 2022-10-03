@@ -27,6 +27,7 @@ class RecipeFilter(django_filters.FilterSet):
         to_field_name='slug'
     )
     author = django_filters.ModelChoiceFilter(
+        field_name='author',
         queryset=User.objects.all(),
     )
 
