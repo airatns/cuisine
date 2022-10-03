@@ -50,6 +50,7 @@ class IngredientForRecipeListSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.CharField(
         source='ingredient.measurement_unit',
         read_only=True
+        # read_only
     )
     amount = serializers.IntegerField()
 
@@ -80,6 +81,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
         source='recipe_ingred',
         many=True,
         read_only=True
+        # read_only
     )
     image = Base64ImageField(read_only=True)
     is_favorited = serializers.SerializerMethodField()

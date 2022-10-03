@@ -15,7 +15,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from .filters import IngredientFilter
+from .filters import IngredientFilter, RecipeTagFilter
 from .models import (FavoriteRecipe, Ingredient, IngredientForRecipe, Recipe,
                      ShoppingCart, Tag)
 from .permissions import AuthorOrReadOnly, ReadOnly
@@ -31,6 +31,7 @@ class TagViewSet(ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     permission_classes = (AuthorOrReadOnly,)
     pagination_class = None
+    filterset_class = RecipeTagFilter
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
