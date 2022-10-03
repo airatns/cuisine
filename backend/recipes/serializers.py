@@ -45,12 +45,11 @@ class IngredientForRecipeListSerializer(serializers.ModelSerializer):
     """Сериализатор определяет, в каком формате ожидаем увидеть
     данные по Ингредиентам для Рецепта, извлеченные из БД.
     """
-    id = serializers.IntegerField(source='ingredient.id',)
-    name = serializers.CharField(source='ingredient.name',)
+    id = serializers.IntegerField(source='ingredient.id', read_only=True)
+    name = serializers.CharField(source='ingredient.name', read_only=True)
     measurement_unit = serializers.CharField(
         source='ingredient.measurement_unit',
         read_only=True
-        # read_only
     )
     amount = serializers.IntegerField()
 
@@ -81,7 +80,6 @@ class RecipeListSerializer(serializers.ModelSerializer):
         source='recipe_ingred',
         many=True,
         read_only=True
-        # read_only
     )
     image = Base64ImageField(read_only=True)
     is_favorited = serializers.SerializerMethodField()
