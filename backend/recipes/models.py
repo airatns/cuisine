@@ -90,7 +90,8 @@ class Recipe(models.Model):
     )
     pub_date = models.DateTimeField(
         'Дата создания рецепта',
-        auto_now_add=True
+        auto_now_add=True,
+        default=1
     )
 
     class Meta:
