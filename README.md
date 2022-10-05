@@ -94,6 +94,6 @@ Cоздать и активировать виртуальное окружен�
 
 >*sudo docker compose exec web python manage.py loaddata fixtures.json*
 
-**Приятного просмотра**
+## **Приятного просмотра**
 
 ![main](https://user-images.githubusercontent.com/96816183/194041831-e1ee55d9-7f47-4d74-ab02-d8bf0ef1c0dc.png)
