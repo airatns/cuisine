@@ -9,43 +9,17 @@ http://51.250.25.11/ | admin@admin.ru | admin
 
 ## **Стек технологий**
 
-Python, Django, PostgreSQL, Docker, Docker Hub, Gunicorn, Nginx, Ubuntu
-
-## **Техническое описание проекта**
-
-Написаны бэкенд проекта и API для него.
-
-Модель **User** переопределена.
-
-База данных наполнена контентом из **csv**-файлов. 
-
-Полное описание можно найти по ссылке после запуска проекта - <a href="http://127.0.0.1:8000/api/docs/" target="_blank">Redoc</a>
+Python, Django, PostgreSQL, Docker, Docker Hub, Gunicorn, Nginx, Ubuntu, YandexCloud
 
 ## **Пользовательские роли:**
 
 * **Гость**: может просматривать рецепты, страницы пользователей, фильтровать рецепты по тегам.
 
-* **Авторизованный пользователь**: может менять свой пароль, добавлять рецепты в Избранное и в Список покупок, подписываться на публикации авторов рецептов.
+* **Авторизованный пользователь**: может менять свой пароль, добавлять рецепты в Избранное и в Список покупок, подписываться на Авторов рецептов.
 
 * **Администратор**: может менять пароль любого пользователя, создавать аккаунты пользователей, создавать/редактировать/удалять рецепты, ингредиенты и теги, назначать роли пользователям.
 
-## **Регистрация нового пользователя**
-Для регистрации сделайте POST-запрос с данными **email**, **username**, **first_name**, **last_name**, **password** на адрес:
-
->*http://127.0.0.1:8000/api/users/*
-
-## **Получение токена авторизации**
-Для аутентификации сделайте POST-запрос с данными **email** и **password** на адрес:
-
->*http://127.0.0.1:8000/api/auth/token/login/*
-
-Вам будет выдан **token** для запросов к API.
-
-### **Пример использования JWT-токена**
-
->*Token ey8Df...*
-
-## **Подготовка на локале:**
+## **Подготовка проекта локально:**
 
 Клонировать репозиторий и перейти в него в командной строке:
 
@@ -53,25 +27,68 @@ Python, Django, PostgreSQL, Docker, Docker Hub, Gunicorn, Nginx, Ubuntu
 
 Cоздать и активировать виртуальное окружение:
 
->*python -m venv env*
+>*python -m venv venv*
+>*source venv/scripts/activate*
 
->*source env/scripts/activate*
+Создать .env файл и прописать в нем следующие данные
 
-Установить зависимости из файла requirements.txt:
+>*SECRET_KEY=<django project's secret key>* \
+>*DEBUG=True | False*
 
->*python -m pip install --upgrade pip*
+>*DB_ENGINE=django.db.backends.postgresql* \
+>*DB_NAME=postgres* \
+>*POSTGRES_USER=postgres* \
+>*POSTGRES_PASSWORD=postgres* \
+>*DB_HOST=db* \
+>*DB_PORT=5432*
 
->*pip install -r requirements.txt*
+В GitHub добавить секреты в Secrets
 
-Выполнить миграции:
+>*DB_ENGINE=django.db.backends.postgresql* \
+>*DB_NAME=postgres* \
+>*POSTGRES_USER=postgres* \
+>*POSTGRES_PASSWORD=postgres* \
+>*DB_HOST=db* \
+>*DB_PORT=5432*
 
->*python manage.py migrate*
+>*DOCKER_USERNAME=<dоckerHub username>* \
+>*DOCKER_PASSWORD=<dоckerHub password>*
 
-Залить данные:
+>*USER=<server's username>* \
+>*HOST=<server's IP-address>*
 
->*python manage.py load_data*
+>*SSH_KEY=<ssh key: cat ~/.ssh/id_rsa>* \
+>*PASSPHRASE=<ssh's password>*
 
-Запустить проект:
+>*TELEGRAM_TO=<telegram account ID: through @userinfobot>* \
+>*TELEGRAM_TOKEN=<telegram bot token: through @BotFather>*
 
->*python manage.py runserver*
+## **Подготовка проекта на сервере:**
 
+Прописать в *nginx.conf* адрес сервера.
+
+Скопировать файлы *docker-compose.yaml* и *nginx.conf* на сервер в 
+
+>*home/<your_username>/docker-compose.yaml* \
+>*home/<your_username>/nginx.conf*
+
+## **Запуск проекта на сервере:**
+
+Выполнить в терминале на локале команды
+
+>*git add .* \
+>*git commit -m 'test'* \
+>*git push*
+
+В случае успешного деплоя в *telegram* придет сообщение: **foodgram-app workflow успешно выполнен!**
+
+Зайти на сервер и выполнить команды
+
+>*sudo docker compose exec web python manage.py createsuperuser* \
+>*sudo docker compose exec web python manage.py load_data*
+
+Если требуется загрузить подготовленные тестовые данные, выполнить команду
+
+>*sudo docker compose exec web python manage.py loaddata fixtures.json*
+
+**Приятного просмотра**
