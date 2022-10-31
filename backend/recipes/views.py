@@ -66,6 +66,27 @@ class RecipeViewSet(ModelViewSet):
             return RecipeListSerializer
         return RecipeCreateSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset
+        is_favorited = self.request.query_params.get('is_favorited')
+        is_in_shopping_cart = self.request.query_params.get(
+            'is_in_shopping_cart')
+
+        if is_favorited is not None:
+            if is_favorited == '1':
+                queryset = queryset.filter(favorite_recipe__user=user,)
+            else:
+                queryset = queryset.exclude(favorite_recipe__user=user,)
+
+        if is_in_shopping_cart is not None:
+            if is_in_shopping_cart == '1':
+                queryset = queryset.filter(shopper_recipe__user=user,)
+            else:
+                queryset = queryset.exclude(shopper_recipe__user=user,)
+
+        return queryset
+
     def perform_create(self, serializer):
         """В поле Author передадим объект пользователя, отправшего запрос,
         при создании объекта Рецепта.
