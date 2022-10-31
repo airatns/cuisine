@@ -101,7 +101,6 @@ def fav_recipe(request, recipe_id):
                                                         recipe=recipe)
         serializer = FavoriteSerializer(
             favorite_recipe,
-            context={'request': request}
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
