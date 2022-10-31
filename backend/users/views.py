@@ -76,7 +76,10 @@ def subscribe(request, author_id):
                 'message': 'Вы уже подписаны на этого автора'
             }, status=status.HTTP_400_BAD_REQUEST)
         subscription = Subscription.objects.create(user=user, author=author)
-        serializer = SubscribeSerializer()
+        serializer = SubscribeSerializer(
+            subscription,
+            context={'request': request}
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     elif request.method == 'DELETE':
@@ -107,5 +110,6 @@ class Subscriptions(generics.ListAPIView):
         serializer = SubscribeSerializer(
             results,
             many=True,
+            context={'request': request}
         )
         return self.get_paginated_response(serializer.data,)
