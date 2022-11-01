@@ -109,6 +109,7 @@ class Subscriptions(generics.ListAPIView):
         results = self.paginate_queryset(subscriptions,)
         serializer = SubscribeSerializer(
             results,
-            many=True
+            many=True,
+            context={'request': request}
         )
         return self.get_paginated_response(serializer.data,)
