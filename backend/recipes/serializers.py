@@ -169,6 +169,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 setattr(recipe, item, validated_data[item])
         recipe.tags.set(tags)
 
+        IngredientForRecipe.objects.filter(recipe=recipe).delete()
+
         objs = [
             IngredientForRecipe(
                 recipe=recipe,
