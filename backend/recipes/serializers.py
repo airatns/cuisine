@@ -164,9 +164,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         """
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        for item in validated_data:
-            if Recipe._meta.get_field(item):
-                setattr(recipe, item, validated_data[item])
         recipe.tags.set(tags)
 
         IngredientForRecipe.objects.filter(recipe=recipe).delete()
