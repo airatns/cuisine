@@ -77,6 +77,7 @@ class Recipe(models.Model):
     )
     image = models.ImageField(
         'Картинка',
+        help_text='Размер не больше 1 Мб',
     )
     text = models.TextField(
         'Описание рецепта',
