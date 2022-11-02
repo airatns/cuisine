@@ -166,7 +166,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         recipe.tags.set(tags)
 
-        recipe.recipe_ingred.delete()
+        recipe.recipe_ingred.all().delete()
 
         objs = [
             IngredientForRecipe(
