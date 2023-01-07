@@ -12,7 +12,7 @@
 
 ![example workflow](https://github.com/airatns/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
-**Foodgram** is the project for publishing recipes, which allows users to subscribe to individual authors, add recipes to the favorites, download a list of ingredients of recipes they like. The project is deployed **[to the server](http://46.18.107.21/recipes)**
+**Foodgram** is the project for publishing recipes, which allows users to subscribe to individual authors, add recipes to the favorites, download a list of ingredients of recipes they like. The project has been deployed **[to the server](http://46.18.107.21/recipes)**
 
 ## **User roles:**
 
