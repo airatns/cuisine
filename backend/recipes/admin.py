@@ -15,7 +15,7 @@ class IngredientsAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_editable = ('name', 'measurement_unit')
     list_display_links = None
-    empty_value_display = '-пусто-'
+    empty_value_display = '-empty-'
 
 
 @admin.register(Recipe)
@@ -30,7 +30,7 @@ class RecipesAdmin(admin.ModelAdmin):
     inlines = (IngredientForRecipeInline,)
 
     def to_favorites(self, obj):
-        """Сколько раз добавили в избранное.
+        """How many times have been added to favorites.
         """
         return obj.favorite_recipe.count()
 
@@ -41,7 +41,7 @@ class TagsAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_editable = ('name', 'color', 'slug')
     list_display_links = None
-    empty_value_display = '-пусто-'
+    empty_value_display = '-empty-'
 
 
 @admin.register(FavoriteRecipe)
