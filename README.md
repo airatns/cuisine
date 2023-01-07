@@ -12,28 +12,28 @@
 
 ![example workflow](https://github.com/airatns/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
-Это проект, где пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список "Избранное", а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд. Вот так проект выглядит **[на сервере](http://46.18.107.21/recipes)**
+Foodgram is the project for publishing recipes, which allows users to subscribe to individual authors, add recipes to the favorites, download a list of ingredients of recipes they like. The project is deployed **[to the server](http://46.18.107.21/recipes)**
 
-## **Пользовательские роли:**
+## **User roles:**
 
-* **Гость**: может просматривать рецепты, страницы пользователей, фильтровать рецепты по тегам.
+* **Guest**: has rights to view recipes, user pages, filter recipes by tags.
 
-* **Авторизованный пользователь**: может менять свой пароль, добавлять рецепты в Избранное и в Список покупок, подписываться на Авторов рецептов.
+* **Authorized user**: has rights to change his password, add recipes to the Favorites and to the Shopping List, subscribe to individual authors.
 
-* **Администратор**: может менять пароль любого пользователя, создавать аккаунты пользователей, создавать/редактировать/удалять рецепты, ингредиенты и теги, назначать роли пользователям.
+* **Administrator**: has rights to change the user's password, create a user account, create/edit/delete recipes, ingredients and tags, assign roles to users.
 
-## **Подготовка проекта локально:**
+## **Getting Started:**
 
-Клонировать репозиторий и перейти в него в командной строке:
+Clone the repository:
 
 >*git clone git@github.com:airatns/foodgram-project-react.git*
 
-Cоздать и активировать виртуальное окружение:
+Set up the virtual environment:
 
 >*python -m venv venv*
 >*source venv/scripts/activate*
 
-Создать .env файл и прописать в нем следующие данные
+Create an .env file and fill it with the next data
 
 >*SECRET_KEY=<django project's secret key>* \
 >*DEBUG=True | False*
@@ -45,7 +45,7 @@ Cоздать и активировать виртуальное окружен�
 >*DB_HOST=db* \
 >*DB_PORT=5432*
 
-В GitHub добавить секреты в Secrets
+Create GitHub Secrets and fill it with the next data
 
 >*DB_ENGINE=django.db.backends.postgresql* \
 >*DB_NAME=postgres* \
@@ -66,34 +66,34 @@ Cоздать и активировать виртуальное окружен�
 >*TELEGRAM_TO=<telegram account ID: through @userinfobot>* \
 >*TELEGRAM_TOKEN=<telegram bot token: through @BotFather>*
 
-## **Подготовка проекта на сервере:**
+## **Before deploying on a server:**
 
-Прописать в *nginx.conf* адрес сервера.
+Add the server address to the *nginx.conf* file.
 
-Скопировать файлы *docker-compose.yaml* и *nginx.conf* на сервер в 
+Copy *docker-compose.yaml* and *nginx.conf* files to the server
 
 >*home/<your_username>/docker-compose.yaml* \
 >*home/<your_username>/nginx.conf*
 
-## **Запуск проекта на сервере:**
+## **Deploying on a server:**
 
-Выполнить в терминале на локале команды
+Run the next commands in the IDE
 
 >*git add .* \
 >*git commit -m 'test'* \
 >*git push*
 
-В случае успешного деплоя в *telegram* придет сообщение: **foodgram-app workflow успешно выполнен!**
+In case of successful deployment, a message will be sent to the *Telegram*: **foodgram-app workflow has been successfully completed!**
 
-Зайти на сервер и выполнить команды
+Run the next commands on the server
 
 >*sudo docker compose exec web python manage.py createsuperuser* \
 >*sudo docker compose exec web python manage.py load_data*
 
-Если требуется загрузить подготовленные тестовые данные, выполнить команду
+If you need to upload the test data, run the next command
 
 >*sudo docker compose exec web python manage.py loaddata fixtures.json*
 
-## **Приятного просмотра**
+## **Well, enjoy**
 
 ![main](https://user-images.githubusercontent.com/96816183/194041831-e1ee55d9-7f47-4d74-ab02-d8bf0ef1c0dc.png)
