@@ -5,8 +5,7 @@ from .models import Ingredient, Recipe, Tag
 
 
 class IngredientFilter(django_filters.FilterSet):
-    """Кастомный фильтр на поиск ингредиента
-    по вхождению в произвольном месте.
+    """Custom filter to find an ingredient in the list.
     """
     name = django_filters.CharFilter(
         field_name='name',
@@ -19,7 +18,7 @@ class IngredientFilter(django_filters.FilterSet):
 
 
 class RecipeFilter(django_filters.FilterSet):
-    """Кастомный фильтр Рецепта по тегам.
+    """Custom filter to find a recipe by tags.
     """
     tags = django_filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
