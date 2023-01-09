@@ -18,7 +18,7 @@
 
 * **Guest**: has rights to view recipes, user pages, filter recipes by tags.
 
-* **Authorized user**: has rights to change his password, add recipes to the Favorites and to the Shopping List, subscribe to individual authors.
+* **Authenticated user**: has rights to change his password, add recipes to the Favorites and to the Shopping List, subscribe to individual authors.
 
 * **Administrator**: has rights to change the user's password, create a user account, create/edit/delete recipes, ingredients and tags, assign roles to users.
 
