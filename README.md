@@ -11,7 +11,7 @@
 
 ![example workflow](https://github.com/airatns/cuisine/actions/workflows/main.yml/badge.svg)
 
-**Cuisine** is the project for publishing recipes, which allows users to subscribe to individual authors, add recipes to the favorites, download a list of ingredients of recipes they like. Authentication was realized via an Authtoken. Also realized filtering by tags and custom pagination, downloading a list of ingredients in pdf. The backend was developed in Python using Django Rest Framework. The API was used for server and application interaction. The project has been deployed **[to the server](http://46.18.107.21/recipes)** in three containers: Nginx, PostgreSQL, Django. CI and CD configured via GitHub Actions.
+**Cuisine** is the project for publishing national recipes, which allows users to subscribe to individual authors, add recipes to the favorites, download a list of ingredients of recipes they like. Authentication was realized via an Authtoken. Also realized filtering by tags and custom pagination, downloading a list of ingredients in pdf. The backend was developed in Python using Django Rest Framework. The API was used for server and application interaction. The project has been deployed **[to the server](http://46.18.107.21/recipes)** in three containers: Nginx, PostgreSQL, Django. CI and CD configured via GitHub Actions.
 
 ## **User roles:**
 
